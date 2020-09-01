@@ -19,6 +19,12 @@ contains the `add` function, defined in the natural way; `add.cc` contains
 `main`, the program entry point that calls `add`. Then there is `GNUmakefile`,
 which contains rules for building the `add` program from those source files.
 
+> **About shell sessions.** A shell session, like the short snippet above,
+> both shows commands you could type and the output of those commands. By
+> convention, the commands you type are shown on lines that start with a shell
+> prompt, which is usually `$`, `%`, or a short string ending with `$` or `%`.
+> You won’t type the shell prompt.
+
 Entry point
 -----------
 
@@ -36,8 +42,8 @@ In a scripting language like Python, the entry point is the top of the script.
 Advance work
 ------------
 
-> Advance work should be completed before lecture, especially by active
-> listeners. There is nothing to turn in.
+*Advance work should be completed before lecture, especially by active
+listeners. There is nothing to turn in.*
 
 1\. Read the `addf.cc` and `add.cc` files and try to understand them. Bring
 questions about anything you don’t understand.
