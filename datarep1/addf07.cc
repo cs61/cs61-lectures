@@ -10,7 +10,7 @@ int add(int a, int b) {
         b -= 2;
     }
     if (a > 0) {
-        --b;
+        ++b;
     }
     return b;
 }
