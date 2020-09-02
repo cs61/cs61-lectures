@@ -26,27 +26,27 @@ Disadvantages of Docker:
 Setting up a CS 61 Docker environment
 -------------------------------------
 
-First, build your Docker image. The first step only needs to be done once; the
-last step should be performed any time the `Dockerfile` changes.
+To prepare to build your Docker environment:
 
-1. Download and install [Docker][].
+1.  Download and install [Docker][].
 
-2. Clone a copy of the [cs61-lectures repository][].
+2.  Clone a copy of the [cs61-lectures repository][].
 
-3. Change into the `cs61-lectures/docker` directory.
+3.  Change into the `cs61-lectures/docker` directory.
 
-4. Build the image. The command will take a couple minutes.
+To build your Docker environment, run this command. It will take a couple
+minutes. You’ll want to re-run this command every time the Docker image
+changes, but later runs should be much faster since they’ll take advantage of
+your previous work.
 
-    ```shellsession
+```shellsession
 $ docker build -t cs61:latest -f Dockerfile .
 ```
 
-Second, run your Docker image. Example command and output:
+To run your Docker image, use a command like the following.
 
 ```shellsession
 $ docker run -it --rm -v ~/cs61-lectures:/home/cs61-user/cs61-lectures cs61:latest
-cs61-user@ae28a76602d8:~$ ls
-cs61-lectures
 ```
 
 Explanation:
@@ -63,9 +63,21 @@ Explanation:
 
 The `docker run` command then plonks you into a virtual machine! A prompt like
 `cs61-user@ae28a76602d8:~$` means that your terminal is connected to the VM.
-You can execute any commands you want.
+You can execute any commands you want. To escape from the VM, type Control-D
+or execute the `exit` command. Here’s an example session:
 
-To escape from the VM, either type Control-D or `exit`.
+```shellsession
+$ docker run -it --rm -v ~/cs61-lectures:/home/cs61-user/cs61-lectures cs61:latest
+cs61-user@a15e6c4c8dbe:~$ ls
+cs61-lectures
+cs61-user@a15e6c4c8dbe:~$ echo "Hello, world"
+Hello, world
+cs61-user@a15e6c4c8dbe:~$ cs61-docker-version
+1
+cs61-user@a15e6c4c8dbe:~$ exit
+exit
+$ 
+```
 
 [Docker]: https://docker.com/
 [VMware Workstation]: https://www.vmware.com/products/workstation-player.html
