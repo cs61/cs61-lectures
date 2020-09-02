@@ -19,12 +19,11 @@ Disadvantages of Docker:
 
 * Docker does not offer a full graphical environment. You will need to run
   programs exclusively in the terminal.
-* Docker technology is a less user-friendly than virtual machines. You’ll have
+* Docker technology is less user-friendly than virtual machines. You’ll have
   to type weird commands.
 * You won’t get the fun, different feeling of a full Linux desktop.
 
-Setting up a CS 61 Docker environment
--------------------------------------
+## Preparing CS 61 Docker
 
 To prepare to build your Docker environment:
 
@@ -42,6 +41,8 @@ your previous work.
 ```shellsession
 $ docker build -t cs61:latest -f Dockerfile .
 ```
+
+### Running CS 61 Docker by hand
 
 To run your Docker image, use a command like the following.
 
@@ -75,6 +76,31 @@ Hello, world
 cs61-user@a15e6c4c8dbe:~$ cs61-docker-version
 1
 cs61-user@a15e6c4c8dbe:~$ exit
+exit
+$ 
+```
+
+## Running CS 61 Docker by script
+
+Our handout repositories, including `cs61-lectures` and `cs61-psets`, contain
+a `cs61-run-docker` script that provides good arguments to Docker and changes
+into Docker’s view of the current directory. We will update this script
+throughout the term.
+
+For example:
+
+```shellsession
+$ cd ~/cs61-lectures/datarep1
+$ echo Hello, Mac OS X
+Hello, Mac OS X
+$ ls
+GNUmakefile     NOTES.md        README.md       add             add.cc          addf.cc
+$ ../cs61-run-docker
+cs61-user@a47f05ea5085:~/cs61-lectures/datarep1$ echo Hello, Linux
+Hello, Linux
+cs61-user@a47f05ea5085:~/cs61-lectures/datarep1$ ls
+add  add.cc  addf.cc  GNUmakefile  NOTES.md  README.md
+cs61-user@a47f05ea5085:~/cs61-lectures/datarep1$ exit
 exit
 $ 
 ```
