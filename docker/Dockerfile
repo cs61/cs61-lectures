@@ -50,6 +50,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
         git \
         git-doc \
         man \
+        micro \
         nano \
         sudo \
         vim \

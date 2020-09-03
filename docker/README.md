@@ -12,16 +12,17 @@ Advantages of Docker:
 
 * Docker can start and stop virtual machines incredibly quickly.
 * Docker-based virtual machines are leaner and take less space on your machine.
-* With Docker, you can *edit* your code in your home environment, but *run* it
-  on a Linux host.
+* With Docker, you can easily *edit* your code in your home environment, but
+  *compile and run* it on a Linux host.
 
 Disadvantages of Docker:
 
-* Docker does not offer a full graphical environment. You will need to run
-  programs exclusively in the terminal.
+* Docker does not offer a full graphical environment. You will need to run all
+  CS61 programs exclusively in the terminal.
 * Docker technology is less user-friendly than virtual machines. You’ll have
   to type weird commands.
 * You won’t get the fun, different feeling of a full Linux desktop.
+
 
 ## Preparing CS 61 Docker
 
@@ -42,9 +43,42 @@ your previous work.
 $ docker build -t cs61:latest -f Dockerfile .
 ```
 
+## Running CS 61 Docker by script
+
+Our handout repositories, including `cs61-lectures` and `cs61-psets`, contain
+a `cs61-run-docker` script that provides good arguments and boots Docker into
+a view of the current directory. We will update this script throughout the
+term.
+
+For example:
+
+```shellsession
+$ cd ~/cs61-lectures/datarep1
+$ echo Hello, Mac OS X
+Hello, Mac OS X
+$ ls
+GNUmakefile     NOTES.md        README.md       add             add.cc          addf.cc
+$ ../cs61-run-docker
+cs61-user@a47f05ea5085:~/cs61-lectures/datarep1$ echo Hello, Linux
+Hello, Linux
+cs61-user@a47f05ea5085:~/cs61-lectures/datarep1$ ls
+add  add.cc  addf.cc  GNUmakefile  NOTES.md  README.md
+cs61-user@a47f05ea5085:~/cs61-lectures/datarep1$ exit
+exit
+$ 
+```
+
+The script plonks you into a virtual machine! A prompt like
+`cs61-user@a47f05ea5085:~$` means that your terminal is connected to the VM.
+You can execute any commands you want. To escape from the VM, type Control-D
+or run the `exit` command.
+
+The script assumes your Docker container is named `cs61:latest`, as it was above.
+
+
 ### Running CS 61 Docker by hand
 
-To run your Docker image, use a command like the following.
+If you don’t want to use the script, use a command like the following.
 
 ```shellsession
 $ docker run -it --rm -v ~/cs61-lectures:/home/cs61-user/cs61-lectures cs61:latest
@@ -62,10 +96,7 @@ Explanation:
   user’s `~/cs61-lectures` directory.
 * `cs61:latest` names the Docker image to run (namely, the one you built).
 
-The `docker run` command then plonks you into a virtual machine! A prompt like
-`cs61-user@ae28a76602d8:~$` means that your terminal is connected to the VM.
-You can execute any commands you want. To escape from the VM, type Control-D
-or execute the `exit` command. Here’s an example session:
+Here’s an example session:
 
 ```shellsession
 $ docker run -it --rm -v ~/cs61-lectures:/home/cs61-user/cs61-lectures cs61:latest
@@ -76,31 +107,6 @@ Hello, world
 cs61-user@a15e6c4c8dbe:~$ cs61-docker-version
 1
 cs61-user@a15e6c4c8dbe:~$ exit
-exit
-$ 
-```
-
-## Running CS 61 Docker by script
-
-Our handout repositories, including `cs61-lectures` and `cs61-psets`, contain
-a `cs61-run-docker` script that provides good arguments to Docker and changes
-into Docker’s view of the current directory. We will update this script
-throughout the term.
-
-For example:
-
-```shellsession
-$ cd ~/cs61-lectures/datarep1
-$ echo Hello, Mac OS X
-Hello, Mac OS X
-$ ls
-GNUmakefile     NOTES.md        README.md       add             add.cc          addf.cc
-$ ../cs61-run-docker
-cs61-user@a47f05ea5085:~/cs61-lectures/datarep1$ echo Hello, Linux
-Hello, Linux
-cs61-user@a47f05ea5085:~/cs61-lectures/datarep1$ ls
-add  add.cc  addf.cc  GNUmakefile  NOTES.md  README.md
-cs61-user@a47f05ea5085:~/cs61-lectures/datarep1$ exit
 exit
 $ 
 ```
