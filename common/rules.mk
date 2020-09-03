@@ -90,7 +90,7 @@ CXXFLAGS += -pg
 endif
 
 # these rules ensure dependencies are created
-DEPCFLAGS = -MD -MF $(DEPSDIR)/$*.d -MP
+DEPCFLAGS = -MD -MF $(DEPSDIR)/$(patsubst %.o,%,$(@F)).d -MP
 DEPSDIR := .deps
 BUILDSTAMP := $(DEPSDIR)/rebuildstamp
 DEPFILES := $(wildcard $(DEPSDIR)/*.d)

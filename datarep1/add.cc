@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include "hexdump.hh"
 
 extern "C" {
 int add(int a, int b);
@@ -14,5 +15,10 @@ int main(int argc, char* argv[]) {
 
     int a = strtol(argv[1], 0, 0);
     int b = strtol(argv[2], 0, 0);
-    printf("%d + %d = %d\n", a, b, add(a, b));
+    int c = add(a, b);
+    printf("%d + %d = %d\n", a, b, c);
+
+    // hexdump_object(a);
+    // hexdump_object(b);
+    // hexdump_object(c);
 }
