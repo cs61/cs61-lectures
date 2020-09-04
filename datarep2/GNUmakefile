@@ -1,5 +1,5 @@
-BASEPROGRAMS = mexplore0 mexplore1
-PROGRAMS = $(BASEPROGRAMS)
+BASEPROGRAMS = mexplore0 mexplore1 mexplore2 mexplore3 mexplore4
+PROGRAMS = $(BASEPROGRAMS) mexplore2-O0 mexplore3-O0 mexplore4-O0
 all: $(PROGRAMS)
 
 ALLPROGRAMS = $(BASEPROGRAMS) $(wildcard $(patsubst %,%-O?,$(BASEPROGRAMS)))
