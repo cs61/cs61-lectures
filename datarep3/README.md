@@ -34,8 +34,8 @@ running the code, of how it will behave.
 `./struct*` programs. Which `./array*` programs match which `./struct*`
 programs? Can you develop a theory of why?
 
-3\. If you run one of programs multiple times, which parts of the output
-change, if any?
+3\. If you run a program multiple times, which parts of its output change, if
+any?
 
 4\. How does the size of a collection relate to the sizes of its components?
 Develop a hypothesis, if you can.
