@@ -1,4 +1,5 @@
-BASEPROGRAMS = array0 array1 struct0 struct1 struct2 struct3
+BASEPROGRAMS = array0 array1 struct0 struct1 struct2 struct3 \
+	union0 localvar0
 PROGRAMS = $(BASEPROGRAMS)
 all: $(PROGRAMS)
 
