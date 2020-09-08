@@ -1,0 +1,8 @@
+arraysum
+arraysum-O[0-9]
+listinsert
+listinsert-O[0-9]
+vectorinsert
+vectorinsert-O[0-9]
+vectorinsert-binsearch
+vectorinsert-binsearch-O[0-9]
