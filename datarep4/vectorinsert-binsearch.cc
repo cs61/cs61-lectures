@@ -1,4 +1,5 @@
 #include "arrayinfo.hh"
+#include "hexdump.hh"
 
 int main(int argc, char* argv[]) {
     array_info info = array_parse_arguments(argc, argv);
@@ -11,7 +12,7 @@ int main(int argc, char* argv[]) {
 
         // find insertion position
         auto pos = std::lower_bound(seq.begin(), seq.end(), value,
-                                    [] (int x, int value) { return x < value; });
+                                    [] (int a, int b) { return a < b; });
 
         // insert value there
         seq.insert(pos, value);

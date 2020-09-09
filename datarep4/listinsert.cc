@@ -1,4 +1,5 @@
 #include "arrayinfo.hh"
+#include "hexdump.hh"
 
 int main(int argc, char* argv[]) {
     array_info info = array_parse_arguments(argc, argv);
