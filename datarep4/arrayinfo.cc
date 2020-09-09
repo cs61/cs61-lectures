@@ -40,7 +40,6 @@ array_info array_parse_arguments(int argc, char** argv) {
 
     array_info info;
     info.size = 6;
-    info.execute = true;
 
     // parse command line arguments
     int initialize_type = 'u';
@@ -52,14 +51,12 @@ array_info array_parse_arguments(int argc, char** argv) {
             || strcmp(argv[i], "-d") == 0
             || strcmp(argv[i], "-m") == 0) {
             initialize_type = argv[i][1];
-        } else if (strcmp(argv[i], "-d") == 0) {
-            info.execute = false;
         } else if (isdigit((unsigned char) argv[i][0])
                    && (size = strtoul(argv[i], &ends, 0)) > 0
                    && *ends == 0) {
             info.size = size;
         } else {
-            fprintf(stderr, "Usage: %s [-r|-u|-d|-m] [-d] [SIZE]\n", argv[0]);
+            fprintf(stderr, "Usage: %s [-r|-u|-d|-m] [SIZE]\n", argv[0]);
             exit(1);
         }
     }

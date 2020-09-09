@@ -14,7 +14,6 @@ struct array_info {
     int* array;
     size_t size;
     const char* pattern;
-    bool execute;
     long sum;
 };
 array_info array_parse_arguments(int argc, char** argv);
