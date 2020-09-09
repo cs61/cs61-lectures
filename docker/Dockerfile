@@ -1,4 +1,4 @@
-FROM ubuntu:groovy
+FROM ubuntu:focal
 
 # set environment variables for tzdata
 ARG TZ=America/New_York
@@ -56,8 +56,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
         vim \
         wget
 
+# set up libraries
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
+    libreadline-dev \
+    locales
+
 # set up default locale
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install locales
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 
@@ -65,7 +69,7 @@ ENV LANG en_US.UTF-8
 RUN rm -r /var/lib/apt/lists/*
 
 # create binary reporting version of dockerfile
-RUN (echo '#\!/bin/sh'; echo 'echo 1') > /usr/bin/cs61-docker-version; chmod ugo+rx,u+w,go-w /usr/bin/cs61-docker-version
+RUN (echo '#\!/bin/sh'; echo 'echo 2') > /usr/bin/cs61-docker-version; chmod ugo+rx,u+w,go-w /usr/bin/cs61-docker-version
 
 # set up passwordless sudo for user cs61-user
 RUN useradd -m -s /bin/bash cs61-user && \
