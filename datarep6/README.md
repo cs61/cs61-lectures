@@ -17,7 +17,7 @@ listeners. There is nothing to turn in.*
 
 2\. Write code that defines variables `b4_ptr` and `b8_ptr` that point to the
 elements at indexes 4 and 8 of the `e.bytes` array, respectively. What types
-do theses variable have? Your code should compile without warning or error.
+do these variables have? Your code should compile without warning or error.
 
 3\. Write code that defines variables `b4_addr` and `b8_addr` that equal the
 *addresses* of the elements at indexes 4 and 8 of the `e.bytes` array. The

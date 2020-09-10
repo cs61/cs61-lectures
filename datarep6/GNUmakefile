@@ -18,6 +18,9 @@ include ../common/rules.mk
 ptrarith: ptrarith.o hexdump.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^
 
+ptrarith%: ptrarith%.o hexdump.o
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^
+
 ptrarith-O0: %: %-O0.o hexdump.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -O0 -o $@ $^
 
