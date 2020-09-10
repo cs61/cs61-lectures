@@ -1,16 +1,19 @@
-MEMBENCH_PROGRAMS = $(patsubst mb%.cc,mb%,$(sort $(wildcard mb[0-9].cc)))
+MB_PROGRAMS = $(patsubst mb%.cc,mb%,$(sort $(wildcard mb[0-9].cc)))
+MB_OTHERMALLOC_PROGRAMS :=
 ifneq ($(findstring /,$(shell whereis libjemalloc 2>/dev/null)),)
-MEMBENCH_PROGRAMS += mb0-jemalloc
+MB_OTHERMALLOC_PROGRAMS += mb0-jemalloc
 endif
 ifneq ($(findstring /,$(shell whereis libtcmalloc 2>/dev/null)),)
-MEMBENCH_PROGRAMS += mb0-tcmalloc
+MB_OTHERMALLOC_PROGRAMS += mb0-tcmalloc
 TCMALLOCLIB = -ltcmalloc
 else ifneq ($(findstring /,$(shell whereis libtcmalloc.so.4 2>/dev/null)),)
-MEMBENCH_PROGRAMS += mb0-tcmalloc
+MB_OTHERMALLOC_PROGRAMS += mb0-tcmalloc
 TCMALLOCLIB = -l:libtcmalloc.so.4
 endif
 
-PROGRAMS = $(MEMBENCH_PROGRAMS)
+PROGRAMS = $(MB_PROGRAMS) $(MB_OTHERMALLOC_PROGRAMS)
+ALLPROGRAMS = $(MB_PROGRAMS) $(patsubst %,%-O0,$(MB_PROGRAMS)) \
+	mb0-jemalloc mb0-tcmalloc mb0-jemalloc-O0 mb0-tcmalloc-O0
 all: $(PROGRAMS)
 
 
