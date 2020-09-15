@@ -126,6 +126,8 @@ else
 cleanasm = :
 endif
 
+PERCENT := %
+
 # cancel implicit rules we don't want
 %: %.c
 %.o: %.c

@@ -87,17 +87,17 @@ this directory chooses `clang++` by default.) Run the program
 3\. Examine the instructions in `./simplealloc-O0` (which is
 unoptimized) using this command line:
 
-    ```sh
+```sh
 $ objdump --disassemble=main -C simplealloc-O0
 ```
 
-    Look especially for the `callq` instruction, which is used to call
-    functions. How many function calls are there? To what functions?
+Look especially for the `callq` instruction, which is used to call
+functions. How many function calls are there? To what functions?
 
 4\. Examine the instructions in `./simplealloc` (which is optimized)
 using this command line:
 
-    ```sh
+```sh
 $ objdump --disassemble=main -C simplealloc
 ```
 
