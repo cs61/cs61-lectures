@@ -1,11 +1,8 @@
-BASEPROGRAMS = simplealloc divzero ubsignedinc
-PROGRAMS = simplealloc-O0 simplealloc divzero \
-	ubsignedinc-O0 ubsignedinc
-ALLPROGRAMS = $(PROGRAMS) $(patsubst %,%-O0,$(PROGRAMS))
+PROGRAMS = badallocs integertrailer useafterfree
+ALLPROGRAMS = $(PROGRAMS)
 all: $(PROGRAMS)
 
 
-COMPILER ?= clang
 PIE ?= 0
 O ?= 3
 include ../common/rules.mk
@@ -26,16 +23,16 @@ include ../common/rules.mk
 %-gcc.o: %.cc $(BUILDSTAMP)
 	clang++ $(CPPFLAGS) $(CXXFLAGS) $(O) $(DEPCFLAGS) -o $@ -c $<
 
-$(BASEPROGRAMS) $(addsuffix -O0,$(BASEPROGRAMS)) \
-$(addsuffix -clang,$(BASEPROGRAMS)) $(addsuffix -clang-O0,$(BASEPROGRAMS)) \
-$(addsuffix -gcc,$(BASEPROGRAMS)) $(addsuffix -gcc-O0,$(BASEPROGRAMS)): %: %.o hexdump.o
+$(PROGRAMS) $(addsuffix -O0,$(PROGRAMS)) \
+$(addsuffix -clang,$(PROGRAMS)) $(addsuffix -clang-O0,$(PROGRAMS)) \
+$(addsuffix -gcc,$(PROGRAMS)) $(addsuffix -gcc-O0,$(PROGRAMS)): %: %.o hexdump.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^
 
 
 clean:
-	rm -rf $(BASEPROGRAMS) $(patsubst %,%-O0,$(BASEPROGRAMS)) \
-	  $(patsubst %,%-clang,$(BASEPROGRAMS)) $(patsubst %,%-gcc,$(BASEPROGRAMS)) \
-	  $(patsubst %,%-clang-O0,$(BASEPROGRAMS)) $(patsubst %,%-gcc-O0,$(BASEPROGRAMS)) \
+	rm -rf $(PROGRAMS) $(patsubst %,%-O0,$(PROGRAMS)) \
+	  $(patsubst %,%-clang,$(PROGRAMS)) $(patsubst %,%-gcc,$(PROGRAMS)) \
+	  $(patsubst %,%-clang-O0,$(PROGRAMS)) $(patsubst %,%-gcc-O0,$(PROGRAMS)) \
 	  *.o $(DEPSDIR)
 
 .PHONY: all clean

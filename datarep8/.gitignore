@@ -1,0 +1,8 @@
+badallocs
+integertrailer
+useafterfree
+*-clang
+*-clang-O0
+*-gcc
+*-gcc-O0
+*-O0

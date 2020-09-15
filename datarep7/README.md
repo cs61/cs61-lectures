@@ -24,8 +24,8 @@ Traceback (most recent call last):
 ZeroDivisionError: division by zero
 ```
 
-*Every* Python program that divides an integer by zero will get the same
-(exceptional) result.
+Every time an integer is divided by zero in Python, the result will be the
+same (an exception).
 
 C and C++, on the other hand, have undefined behavior. Here’s a “C++” program
 that divides by zero:
@@ -48,12 +48,12 @@ it will produce different results.
 This wide range of output is possible only because the original program **is
 not valid C++**. It *looks* like C++, but because it always divides an integer
 by zero, the program is invalid, and compilers are allowed to compile invalid
-programs so that they do *anything*. That’s very different from Python, and it
+programs so that they do **anything**. That’s very different from Python, and it
 makes C and C++ much riskier to program.
 
-C and C++ have undefined behavior for reasons that are in part part
-historical. Undefined behavior was part of the language before computer
-scientists realized how risky it was. It remains part of the language for bad
+C and C++ have undefined behavior for reasons that are in part historical.
+Undefined behavior was part of the language before computer scientists
+realized how risky it was. It remains part of the language for bad
 reasons—such as tradition—and because optimizers can take advantage of
 undefined behavior to make programs faster.
 
@@ -62,10 +62,11 @@ rule**](https://en.wikipedia.org/wiki/As-if_rule). A compiler can transform a
 valid input program however it wants, as long as the transformation preserves
 the program’s observable behavior: the transformed program always behaves **as
 if** it were the original. The as-if rule lets the compiler remove all kinds
-of redundant code. It can throw away functions, remove loops—anything that
-keeps the input program’s behavior the same. But the as-if rule only applies
-to *valid* input programs. If the input program would execute undefined
-behavior, then the compiler can do anything.
+of redundant code. It can throw away functions, remove loops, even replace
+slow algorithms with faster ones—anything that keeps the input program’s
+behavior the same. But the as-if rule only constrains compilers on *valid*
+input programs. If the input program would execute undefined behavior, then
+the compiler can do anything.
 
 Advance work
 ------------
