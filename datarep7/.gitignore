@@ -1,0 +1,8 @@
+simplealloc
+divzero
+ubsignedinc
+*-clang
+*-clang-O0
+*-gcc
+*-gcc-O0
+*-O0
