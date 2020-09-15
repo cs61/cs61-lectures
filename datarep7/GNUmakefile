@@ -1,7 +1,8 @@
-BASEPROGRAMS = simplealloc divzero ubsignedinc
+BASEPROGRAMS = simplealloc divzero ubsignedinc ubsignedloop ubsignedloop-noub
 PROGRAMS = simplealloc-O0 simplealloc divzero \
-	ubsignedinc-O0 ubsignedinc
-ALLPROGRAMS = $(PROGRAMS) $(patsubst %,%-O0,$(PROGRAMS))
+	ubsignedinc-O0 ubsignedinc \
+	ubsignedloop-O0 ubsignedloop ubsignedloop-noub \
+	ubunsignedloop-O0 ubunsignedloop
 all: $(PROGRAMS)
 
 
@@ -9,6 +10,8 @@ COMPILER ?= clang
 PIE ?= 0
 O ?= 3
 include ../common/rules.mk
+variants = $(1) $(addsuffix -O0,$(1)) $(addsuffix -clang,$(1)) $(addsuffix -clang-O0,$(1)) \
+	$(addsuffix -gcc,$(1)) $(addsuffix -gcc-O0,$(1))
 
 
 %.o: %.cc $(BUILDSTAMP)
@@ -26,17 +29,15 @@ include ../common/rules.mk
 %-gcc.o: %.cc $(BUILDSTAMP)
 	clang++ $(CPPFLAGS) $(CXXFLAGS) $(O) $(DEPCFLAGS) -o $@ -c $<
 
-$(BASEPROGRAMS) $(addsuffix -O0,$(BASEPROGRAMS)) \
-$(addsuffix -clang,$(BASEPROGRAMS)) $(addsuffix -clang-O0,$(BASEPROGRAMS)) \
-$(addsuffix -gcc,$(BASEPROGRAMS)) $(addsuffix -gcc-O0,$(BASEPROGRAMS)): %: %.o hexdump.o
+$(call variants,simplealloc divzero ubsignedinc): %: %.o hexdump.o
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^
+
+$(call variants,ubsignedloop ubsignedloop-noub ubunsignedloop): %: %.o hexdump.o use_int.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^
 
 
 clean:
-	rm -rf $(BASEPROGRAMS) $(patsubst %,%-O0,$(BASEPROGRAMS)) \
-	  $(patsubst %,%-clang,$(BASEPROGRAMS)) $(patsubst %,%-gcc,$(BASEPROGRAMS)) \
-	  $(patsubst %,%-clang-O0,$(BASEPROGRAMS)) $(patsubst %,%-gcc-O0,$(BASEPROGRAMS)) \
-	  *.o $(DEPSDIR)
+	rm -rf $(call variants,$(BASEPROGRAMS)) *.o $(DEPSDIR)
 
 .PHONY: all clean
 .PRECIOUS: %-clang.o %-gcc.o %-clang-O0.o %-gcc-O0.o

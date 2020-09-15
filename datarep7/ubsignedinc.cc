@@ -2,6 +2,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
+#include "hexdump.hh"
 
 int main(int argc, char** argv) {
     assert(argc >= 2);

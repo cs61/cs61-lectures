@@ -1,6 +1,9 @@
 simplealloc
 divzero
 ubsignedinc
+ubsignedloop
+ubsignedloop-noub
+ubunsignedloop
 *-clang
 *-clang-O0
 *-gcc

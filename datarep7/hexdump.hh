@@ -34,10 +34,4 @@ void fhexdump(FILE* f, const void* ptr, size_t size);
 //    address of `ptr`.
 void fhexdump_at(FILE* f, size_t first_offset, const void* ptr, size_t size);
 
-
-// use_int(i)
-//    Do nothing to `i` in a way that discourages optimization.
-void __attribute__((noinline)) use_int(int i);
-void __attribute__((noinline)) use_int(unsigned i);
-
 #endif

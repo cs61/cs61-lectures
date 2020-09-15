@@ -36,10 +36,3 @@ static void fhexdump_ascii(FILE* f, const unsigned char* p, size_t pos) {
     }
     fprintf(f, "%*s|%.*s|\n", 51 - (3 * n + (n > 8)), "", n, buf);
 }
-
-
-void use_int(int) {
-}
-
-void use_int(unsigned) {
-}
