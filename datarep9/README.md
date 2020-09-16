@@ -19,9 +19,10 @@ checksum must have the property that the checksums of equal strings are equal,
 and checksums of different strings should usually be different. We use
 checksums in computer science to validate data. For instance, if Alice wants
 to transmit a message to Bob, then Alice can send both the message and a
-checksum of the message. When Bob receives the message, Bob will compute the
-checksum on his version, then compare it with Alice’s checksum. If the
-checksums differ, then Bob knows that the message was corrupted.
+checksum of the message. When Bob receives the message and checksum, Bob can
+compute the checksum of his version of the message, then compare it with
+Alice’s checksum. If the checksums differ, then Bob knows that either the
+message or the checksum was corrupted in transit.
 
 There’s a whole branch of computer science theory about creating good checksum
 functions. The best checksums, **cryptographic hash functions**, have the
