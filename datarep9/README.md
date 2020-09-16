@@ -35,8 +35,8 @@ but they still can be useful. Run `./attackme` with some arguments, such as
 checksum of the standard input, use a command line such as `echo Hello world |
 ./attackme`.
 
-1\. Examine the `attackme.cc` code. Describe in your own words `attackme`’s
-checksum is computed.
+1\. Examine the `attackme.cc` code. Describe in your own words how `attackme`
+computes checksums.
 
 2\. Sketch a picture of `attackme`’s memory at the point that the `checksum`
 function returns. Which variables are located in which segments of memory? Use
