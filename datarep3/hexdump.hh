@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cassert>
 #include <cstdlib>
+#include <cstring>
 
 // hexdump(ptr, size)
 //    Print a hexdump of the `size` bytes of data starting at `ptr`

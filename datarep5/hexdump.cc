@@ -1,5 +1,4 @@
 #include "hexdump.hh"
-#include <cassert>
 
 static void fhexdump_ascii(FILE* f, const unsigned char* p, size_t pos);
 
@@ -35,11 +34,4 @@ static void fhexdump_ascii(FILE* f, const unsigned char* p, size_t pos) {
         buf[i - first] = (p[i] >= 32 && p[i] < 127 ? p[i] : '.');
     }
     fprintf(f, "%*s|%.*s|\n", 51 - (3 * n + (n > 8)), "", n, buf);
-}
-
-
-void use_int(int) {
-}
-
-void use_int(unsigned) {
 }

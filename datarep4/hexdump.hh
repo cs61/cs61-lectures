@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cassert>
 #include <cstdlib>
+#include <cstring>
 
 // hexdump(ptr, size)
 //    Print a hexdump of the `size` bytes of data starting at `ptr`
@@ -16,7 +17,10 @@ void hexdump(const void* ptr, size_t size);
 
 // hexdump_object(object)
 //    Like hexdump(&object, sizeof(object)).
-#define hexdump_object(object) hexdump(&(object), sizeof((object)))
+template <typename T>
+void hexdump_object(const T& object) {
+    hexdump(&object, sizeof(object));
+}
 
 
 // fhexdump(f, ptr, size)
@@ -26,7 +30,10 @@ void fhexdump(FILE* f, const void* ptr, size_t size);
 
 // fhexdump_object(f, object)
 //    Like `fhexdump(f, &object, sizeof(object))`.
-#define fhexdump_object(f, object) fhexdump((f), &(object), sizeof((object)))
+template <typename T>
+void hexdump_object(FILE* f, const T& object) {
+    fhexdump(f, &object, sizeof(object));
+}
 
 
 // fhexdump_at(f, first_offset, ptr, size)
