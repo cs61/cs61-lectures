@@ -63,7 +63,7 @@ CFLAGS += -fsanitize=thread
 CXXFLAGS += -fsanitize=thread
  endif
 else
- ifeq ($(or $(ASAN),$(SAN)),1)
+ ifeq ($(or $(ASAN),$(LSAN),$(LEAKSAN),$(SAN)),1)
   ifeq ($(call check_for_sanitizer,address),1)
 CFLAGS += -fsanitize=address
 CXXFLAGS += -fsanitize=address
