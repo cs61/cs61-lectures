@@ -1,7 +1,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#if __linux__
 #include <malloc.h>
+#endif
 #include "hexdump.hh"
 
 char* my_malloc(size_t sz) {
