@@ -1,7 +1,7 @@
 extern "C" {
 
-int add(int a, int b) {
+short add(short a, short b) {
     return a + b;
 }
-
+    
 }
