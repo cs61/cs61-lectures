@@ -68,23 +68,24 @@ ENV LANG en_US.UTF-8
 # remove unneeded .deb files
 RUN rm -r /var/lib/apt/lists/*
 
-# create binary reporting version of dockerfile
-RUN (echo '#\!/bin/sh'; echo 'echo 2') > /usr/bin/cs61-docker-version; chmod ugo+rx,u+w,go-w /usr/bin/cs61-docker-version
-
 # set up passwordless sudo for user cs61-user
 RUN useradd -m -s /bin/bash cs61-user && \
     echo "cs61-user ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/cs61-init
-USER cs61-user
+
+# create binary reporting version of dockerfile
+RUN (echo '#\!/bin/sh'; echo 'echo 3') > /usr/bin/cs61-docker-version; chmod ugo+rx,u+w,go-w /usr/bin/cs61-docker-version
 
 # git build arguments
 ARG USER=CS61\ User
 ARG EMAIL=nobody@example.com
 
 # configure your environment
+USER cs61-user
 RUN git config --global user.name "${USER}" && \
     git config --global user.email "${EMAIL}" && \
     (echo "(custom-set-variables"; echo " '(c-basic-offset 4)"; echo " '(indent-tabs-mode nil))") > ~/.emacs && \
-    (echo "set expandtab"; echo "set shiftwidth=4"; echo "set softtabstop=4") > ~/.vimrc
+    (echo "set expandtab"; echo "set shiftwidth=4"; echo "set softtabstop=4") > ~/.vimrc && \
+    echo "add-auto-load-safe-path ~" > ~/.gdbinit
 
 WORKDIR /home/cs61-user
 

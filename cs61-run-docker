@@ -28,7 +28,7 @@ if test -z "$maindir" && expr "${BASH_SOURCE[0]}" : / >/dev/null 2>&1; then
 fi
 
 if test -n "$maindir"; then
-    docker run -it --rm -v "$maindir":/home/cs61-user/cs61-lectures -w "/home/cs61-user/cs61-lectures$subdir" cs61:latest
+    docker run -it --rm --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v "$maindir":/home/cs61-user/$destdir -w "/home/cs61-user/$destdir$subdir" cs61:latest
 else
-    docker run -it --rm cs61:latest
+    docker run -it --rm --cap-add=SYS_PTRACE --security-opt seccomp=unconfined cs61:latest
 fi
