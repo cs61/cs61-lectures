@@ -1,17 +1,20 @@
-ASMS := $(patsubst %.cc,%.s,$(sort $(wildcard f*.cc)))
-ASM_OBJECTS := $(patsubst %.s,%.o,$(ASMS))
-ASM_PROGRAMS := $(shell grep -l main $(wildcard f*.s f*.cc) | sed 's/\.[cs]*//' | sort -u)
+BUILDABLEASM := $(sort $(patsubst %.cc,%.s,$(wildcard f*.cc)) \
+	$(patsubst src/%.cc,%.s,$(wildcard src/f*.cc)))
+ALLASM := $(sort $(BUILDABLEASM) $(wildcard f*.s))
+ASMOBJECTS := $(patsubst %.s,%.o,$(ALLASM))
+ASMPROGRAMS := $(sort $(patsubst %.s,%,$(patsubst %.cc,%,$(patsubst src/%,%,$(shell grep -l main $(wildcard f*.s f*.cc src/f*.cc))))))
 DEFAULT_ASM_CXXFLAGS = -O1
 DEFAULT_ASM_CXXFLAGS_DEBUG = -g $(DEFAULT_ASM_CXXFLAGS)
-PROGRAMS = $(ASM_PROGRAMS)
+PROGRAMS = $(ASMPROGRAMS)
 
-all: $(ASMS) $(PROGRAMS)
+all: $(BUILDABLEASM) $(PROGRAMS)
 
-asm: cleanasm $(ASMS) $(PROGRAMS)
+asm: cleanasm $(BUILDABLEASM) $(PROGRAMS)
 
 variants = $(1) $(addsuffix -unsafe,$(1)) $(addsuffix -O0,$(1))
 
 
+COMPILER ?= gcc
 PIE ?= 0
 O ?= 3
 include ../common/rules.mk
@@ -37,7 +40,19 @@ UNSAFEFLAGS := -U_FORTIFY_SOURCE -fno-stack-protector $(if $(ISLINUX),-no-pie,)
 	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
 	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ -S $<,COMPILE -S $$ARGS $<) && { $(call cleanasm,$@); }
 
+%.s: src/%.cc GNUmakefile
+	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
+	  CXXFLAGS="`echo "$(CXXFLAGS)" | sed 's/ *-g */ /'`"; \
+	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
+	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ -S $<,COMPILE -S $$ARGS $<) && { $(call cleanasm,$@); }
+
 %-unsafe.s: %.cc GNUmakefile
+	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
+	  CXXFLAGS="`echo "$(UNSAFEFLAGS) $(CXXFLAGS)" | sed 's/ *-g */ /'`"; \
+	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
+	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ -S $<,COMPILE -S $$ARGS $<) && { $(call cleanasm,$@); }
+
+%-unsafe.s: src/%.cc GNUmakefile
 	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
 	  CXXFLAGS="`echo "$(UNSAFEFLAGS) $(CXXFLAGS)" | sed 's/ *-g */ /'`"; \
 	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
@@ -47,10 +62,10 @@ UNSAFEFLAGS := -U_FORTIFY_SOURCE -fno-stack-protector $(if $(ISLINUX),-no-pie,)
 	objdump -d $< > $@
 
 
-$(ASM_OBJECTS): %.o: %.s $(BUILDSTAMP)
+$(ASMOBJECTS): %.o: %.s $(BUILDSTAMP)
 	$(call run,$(CXX) -o $@ -c,ASSEMBLE,$<)
 
-$(ASM_PROGRAMS): %: %.s
+$(ASMPROGRAMS): %: %.s
 	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
 	  CXXFLAGS="`echo "$(CXXFLAGS)" | sed 's/ *-g */ /;s/ *-std=[^ ]* */ /'`"; \
 	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
@@ -68,7 +83,7 @@ clean:
 	rm -rf $(call variants,$(PROGRAMS)) *.o $(DEPSDIR)
 
 cleanasm: clean
-	rm -f $(patsubst %.cc,%.s,$(wildcard f*.cc))
+	rm -f $(BUILDABLEASM)
 
 .PHONY: all clean cleanasm asm
 .PRECIOUS: %-O0.o %-O1.o %-unsafe.o %-unsafe.s

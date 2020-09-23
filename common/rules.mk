@@ -34,12 +34,12 @@ endif
 endif
 ifeq ($(COMPILER),gcc)
 ifeq ($(origin CC),default)
-ifeq ($(shell if gcc --version | grep -e 'Free Software' >/dev/null; then echo 1; else echo 0; fi),1)
+ifeq ($(shell if gcc --version 2>&1 | grep -e 'Free Software' >/dev/null; then echo 1; else echo 0; fi),1)
 CC = gcc
 endif
 endif
 ifeq ($(origin CXX),default)
-ifeq ($(shell if g++ --version | grep -e 'Free Software' >/dev/null; then echo 1; else echo 0; fi),1)
+ifeq ($(shell if g++ --version 2>&1 | grep -e 'Free Software' >/dev/null; then echo 1; else echo 0; fi),1)
 CXX = g++
 endif
 endif
@@ -121,7 +121,7 @@ CXX_LINK_PREREQUISITES = $(CXX) $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^
 
 CLEANASM = 1
 ifeq ($(CLEANASM),1)
-cleanasm = perl -ni -e 'print if !/^(?:\# BB|\s+\.cfi|\s+\.p2align|\s+\# =>This)/' $(1)
+cleanasm = perl -ni -e '$$badsection = !!/\.note\.gnu/ if /^\s+\.section/; print if !/^(?:\# BB|\s+\.cfi|\s+\.p2align|\s+\# =>This)/ && !$$badsection' $(1)
 else
 cleanasm = :
 endif
