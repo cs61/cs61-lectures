@@ -44,7 +44,11 @@ CXX = g++
 endif
 endif
 endif
+
 ISCLANG := $(shell if $(CC) --version | grep -e 'LLVM\|clang' >/dev/null; then echo 1; else echo 0; fi)
+ifeq ($(ISCLANG),1)
+BADCXXFLAGS ?= -fno-if-conversion -fno-if-conversion2
+endif
 
 # sanitizer arguments
 ifndef SAN
@@ -125,6 +129,13 @@ cleanasm = perl -ni -e '$$badsection = !!/\.note\.gnu/ if /^\s+\.section/; print
 else
 cleanasm = :
 endif
+
+flagged_compile = @ARGS=$$(grep '^//!' $< | sed 's/.*!//$(patsubst %,;s/ % */ /,$(BADCXXFLAGS));s/^ | $$//'); \
+	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
+	  $(call xrun,$(CXX) $(3) $$ARGS -o $(2) $(1),COMPILE $$ARGS $(1) -o $(2))
+
+flagged_compile_S = $(call flagged_compile,$(1),$(2),$(filter-out -g,$(3) -S)) && { $(call cleanasm,$(2)); }
+
 
 PERCENT := %
 

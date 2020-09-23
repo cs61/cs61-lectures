@@ -34,49 +34,38 @@ UNSAFEFLAGS := -U_FORTIFY_SOURCE -fno-stack-protector $(if $(ISLINUX),-no-pie,)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -O1 $(DEPCFLAGS) -o $@ -c $<
 
 
-%.s: %.cc GNUmakefile
-	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
-	  CXXFLAGS="`echo "$(CXXFLAGS)" | sed 's/ *-g */ /'`"; \
-	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
-	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ -S $<,COMPILE -S $$ARGS $<) && { $(call cleanasm,$@); }
+%.s: %.cc GNUmakefile $(BUILDSTAMP)
+	$(call flagged_compile_S,$<,$@,$(CXXFLAGS))
 
-%.s: src/%.cc GNUmakefile
-	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
-	  CXXFLAGS="`echo "$(CXXFLAGS)" | sed 's/ *-g */ /'`"; \
-	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
-	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ -S $<,COMPILE -S $$ARGS $<) && { $(call cleanasm,$@); }
+%.s: src/%.cc GNUmakefile $(BUILDSTAMP)
+	$(call flagged_compile_S,$<,$@,$(CXXFLAGS))
 
-%-unsafe.s: %.cc GNUmakefile
-	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
-	  CXXFLAGS="`echo "$(UNSAFEFLAGS) $(CXXFLAGS)" | sed 's/ *-g */ /'`"; \
-	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
-	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ -S $<,COMPILE -S $$ARGS $<) && { $(call cleanasm,$@); }
+%-unsafe.s: %.cc GNUmakefile $(BUILDSTAMP)
+	$(call flagged_compile_S,$<,$@,$(UNSAFEFLAGS) $(CXXFLAGS))
 
-%-unsafe.s: src/%.cc GNUmakefile
-	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
-	  CXXFLAGS="`echo "$(UNSAFEFLAGS) $(CXXFLAGS)" | sed 's/ *-g */ /'`"; \
-	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
-	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ -S $<,COMPILE -S $$ARGS $<) && { $(call cleanasm,$@); }
+%-unsafe.s: src/%.cc GNUmakefile $(BUILDSTAMP)
+	$(call flagged_compile_S,$<,$@,$(UNSAFEFLAGS) $(CXXFLAGS))
 
 %.asm: %.o
 	objdump -d $< > $@
 
 
+%.o: %.cc $(BUILDSTAMP)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(O) $(DEPCFLAGS) -o $@ -c $<
+
 $(ASMOBJECTS): %.o: %.s $(BUILDSTAMP)
 	$(call run,$(CXX) -o $@ -c,ASSEMBLE,$<)
 
-$(ASMPROGRAMS): %: %.s
-	@ARGS=$$(grep '^//!' $< | sed 's/.*! *//'); \
-	  CXXFLAGS="`echo "$(CXXFLAGS)" | sed 's/ *-g */ /;s/ *-std=[^ ]* */ /'`"; \
-	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
-	  $(call xrun,$(CXX) $$CXXFLAGS $$ARGS -o $@ $<,ASSEMBLE $@)
+$(ASMPROGRAMS): %: %.o hexdump.o
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^
 
 
-allfc.txt: $(wildcard f*.cc) always
-	for i in f*.cc; do echo $$i; echo ========; cat $$i; echo; echo; done > allfc.txt
+allfc.txt: $(wildcard f*.cc src/f*.cc) always
+	for i in f*.cc src/f*.cc; do echo $$i; echo ========; cat $$i; echo; echo; done > allfc.txt
 
-allfs.txt: $(patsubst %.cc,%.s,$(wildcard f*.cc)) always
-	for i in f*.s; do echo $$i; echo ========; cat $$i; echo; echo; done > allfs.txt
+allfs.txt: $(ALLASM) always
+	for i in $(ALLASM); do \
+	    echo $$i; echo ========; cat $$i; echo; echo; done > allfs.txt
 
 
 clean:

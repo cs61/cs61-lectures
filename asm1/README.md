@@ -10,6 +10,9 @@ showing that the behavior of assembly language can in some ways be inferred.
 If you prefer a more straightforward presentation, try the textbook and the
 [lecture notes](https://cs61.seas.harvard.edu/site/2020/Asm).
 
+Source files for our reverse-engineered assembly are in the `src/`
+directory.
+
 Advance work
 ------------
 
