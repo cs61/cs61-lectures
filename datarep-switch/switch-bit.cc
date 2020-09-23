@@ -29,12 +29,12 @@ public:
 
     FixedPoint_32_8(uint32_t val, uint8_t log_R) : _val(val), _log_R(log_R) {}; //c'tor that gets val and log_R as parameters
 
-    FixedPoint_32_8(double frac) { //c'tor that gets a real number and computes val and log_R
-        if (frac < 1)
+    FixedPoint_32_8(double x) { //c'tor that gets a real number and computes val and log_R
+        if (x < 1)
             _log_R = 0;
         else
-            _log_R = (uint8_t)ceil(log2(frac));
-        _val = frac * ((uint32_t)1 << (31 - _log_R));
+            _log_R = (uint8_t)ceil(log2(x));
+        _val = x * ((uint32_t)1 << (31 - _log_R));
     }
     
     FixedPoint_32_8(FixedPoint_32_8 const& obj) : _val(obj._val), _log_R(obj._log_R) {}
