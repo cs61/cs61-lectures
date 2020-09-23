@@ -110,7 +110,6 @@ We use around 100K entries total. The number of entries would affect the accurac
 #define EXP_TABLE_ENTRY 1024 
 #define EXP_TABLE_EXP 42
 //supports exponentiating numbers smaller than 2^(42-10)=2^32
-
 class FixedPoint_32_8_table : public FixedPoint_32_8 {
     static FixedPoint_32_8 _log_lookup_table[LOG_TABLE_SIZE];
     static FixedPoint_32_8 _exp_lookup_table[EXP_TABLE_ENTRY][EXP_TABLE_EXP]; 

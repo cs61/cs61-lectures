@@ -1,23 +1,16 @@
 CS61 2020: Data Representation 2
 ================================
 
-This directory contains the source code for several simple programs that print
-the contents of memory. They don’t take arguments. To run them:
+This directory contains the source code for data representations at switches
 
 ```shellsession
 $ make
 ...
-$ ./mexplore0
-... prints output ...
-$ ./mexplore1
+$ ./switch-bit 4.2 3.7
 ... prints output ...
 ```
-
-This lecture will discuss how a program’s memory is laid out—its *address
-space*. We’ll name different regions, or *segments*, of memory, position them
-relative to each other, and describe their behavior. Different kinds of
-objects are located in different segments; we’ll discuss how object lifetimes
-relate to segments.
+This lecture will describe how to do arithmetics of real numbers on a switch that only supports fixed point types but floating points.
+The switch only supports addition, deletion, all kinds of bit operations, and table lookups,  but not multiplication, log, and exp. 
 
 Advance work
 ------------
@@ -25,10 +18,11 @@ Advance work
 *Advance work should be completed before lecture, especially by active
 listeners. There is nothing to turn in.*
 
-1\. Read the `mexplore0.cc` and `mexplore1.cc` files and try to understand
-them. Bring questions about anything you don’t understand. Develop an idea,
-before running the code, of how it will behave.
+1\. Read the `switch-bit.cc` files and try to understand
+them. Bring questions about anything you don’t understand.
 
-2\. Run the `./mexplore0` and `./mexplore1` programs. Each program produces
-more than one line of output. For each program, how do its output lines
-relate? Think about similarities and differences.
+2\. How can we represent real numbers using integers? Which way is more accurate?
+
+3\. How can we support multiplication? Log? and Exp?
+
+4\. How would the arithmetic accuracy change if we increase the number of entries in _log_lookup_table and _exp_lookup_table?
