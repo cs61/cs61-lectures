@@ -22,7 +22,7 @@ int sum3() {
 }
 
 
-extern signed short a4, b4;
+extern unsigned short a4, b4;
 
 int sum4() {
     return a4 + b4;
