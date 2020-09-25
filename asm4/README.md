@@ -1,4 +1,4 @@
-CS61 2020: Data Representation at Switches
+CS61 2020: Data Representation and Assembly in Switches
 ================================
 
 This directory contains the source code for data representations at switches
