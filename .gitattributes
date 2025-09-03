@@ -1,0 +1,3 @@
+*.sh    text eol=lf
+cs61-run-docker    text eol=lf
+cs61-build-docker  text eol=lf
