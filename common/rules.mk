@@ -24,7 +24,7 @@ ifeq ($(STATIC),1)
 LDFLAGS += -static
 endif
 
-# skip x86 versions in ARM Docker
+# maybe skip x86 versions in ARM Docker
 X86 ?= 1
 ifneq ($(X86),1)
  ifneq ($(findstring /usr/x86_64-linux-gnu/bin:,$(PATH)),)
@@ -82,7 +82,7 @@ ASAN := $(if $(strip $(shell $(CC) -v 2>&1 | grep 'build=aarch.*target=x86')),0,
  endif
 endif
 
-check_for_sanitizer = $(if $(strip $(shell $(CC) -fsanitize=$(1) -x c -E /dev/null 2>&1 | grep sanitize=)),$(info ** WARNING: The `$(CC)` compiler does not support `-fsanitize=$(1)`.),1)
+check_for_sanitizer = $(if $(strip $(shell $(CC) -fsanitize=$(1) -x c -o /dev/null /dev/null 2>&1 | grep main)),1,$(info ** WARNING: The `$(CC)` compiler does not support `-fsanitize=$(1)`.))
 SANFLAGS :=
 ifneq ($(and $(filter-out 0,$(TSAN)),$(filter-out 0,$(ASAN))),)
 $(error "ASAN=1 conflicts with TSAN=1, pick one or the other")
