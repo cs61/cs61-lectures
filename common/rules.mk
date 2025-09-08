@@ -47,6 +47,11 @@ BEST_CLANGXX := $(shell for s in -21 -20 -19 -18 ""; do if clang++$$s --version 
 endif
 
 # compiler variant
+ifndef COMPILER
+ ifeq ($(BEST_GCC),false)
+COMPILER := clang
+ endif
+endif
 ifeq ($(origin CC),default)
  ifeq ($(COMPILER),clang)
 CC = $(BEST_CLANG)
