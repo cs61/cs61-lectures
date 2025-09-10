@@ -1,4 +1,5 @@
-PROGRAMS = $(patsubst %.cc,%,$(wildcard test*.cc))
+PROGRAMS = $(patsubst %.cc,%,$(wildcard test*.cc)) \
+	badlifetime outofheap outofstack
 all: $(PROGRAMS)
 
 include ../common/rules.mk

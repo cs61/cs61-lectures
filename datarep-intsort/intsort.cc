@@ -19,7 +19,7 @@ int main() {
 
     // print integers in sorted order
     for (auto& value : ints) {
-        //fprintf(stdout, "%d\n", value);
-        print_object(value);
+        printf("%d\n", value);
+        //print_object(value);
     }
 }
