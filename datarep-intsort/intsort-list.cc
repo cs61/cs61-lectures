@@ -1,10 +1,10 @@
 #include <cstdio>
 #include <cassert>
-#include <vector>
+#include <list>
 #include "print_bytes.hh"
 
 int main() {
-    std::vector<int> ints;
+    std::list<int> ints;
 
     // read integers from stdin, storing them in sorted order
     int input;

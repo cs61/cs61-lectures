@@ -1,4 +1,4 @@
-PROGRAMS = intgen intsort intsort-binsearch intsort-list intsort-multiset intsort-vector
+PROGRAMS = opbench ubsignedinc ubsignedloop ubtable
 all: $(PROGRAMS)
 
 include ../common/rules.mk
@@ -12,6 +12,6 @@ $(PROGRAMS): \
 
 
 clean:
-	rm -rf $(PROGRAMS) $(wildcard intsort[1-6] intsort-tree) *.o $(DEPSDIR)
+	rm -rf $(PROGRAMS) *.o $(DEPSDIR)
 
 .PHONY: all clean
