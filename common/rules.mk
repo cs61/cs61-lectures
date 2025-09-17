@@ -14,6 +14,14 @@ CXXFLAGS += -pthread
 WANT_TSAN ?= 1
 endif
 
+UNSAFE ?= 0
+ifeq ($(UNSAFE),1)
+SAN ?= 0
+PIE ?= 0
+CFLAGS += -fno-stack-protector -fcf-protection=none -D_FORTIFY_SOURCE=0
+CXXFLAGS += -fno-stack-protector -fcf-protection=none -D_FORTIFY_SOURCE=0
+endif
+
 PIE ?= 1
 ifeq ($(PIE),0)
 LDFLAGS += -no-pie
