@@ -1,0 +1,9 @@
+addf.s
+addf[0-9][0-9].s
+arithf[0-9][0-9].s
+asmsrc.txt
+callf[0-9][0-9].s
+condf[0-9][0-9].s
+redzonef[0-9][0-9].s
+vecaccessf[0-9][0-9].s
+vecsumf[0-9][0-9].s

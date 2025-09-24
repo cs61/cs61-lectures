@@ -94,7 +94,7 @@ $(addsuffix -clang-noopt,$(BASEPROGRAMS)): \
 
 
 asmsrc.txt: always
-	for i in $(foreach src,$(patsubst %.s,%,$(BUILDABLEASM)),$(wildcard $(src).cc src/$(src).cc)); do echo $$i; echo ====================; cat $$i; echo; echo; echo; done > $@
+	for i in `for i in $(foreach src,$(patsubst %.s,%,$(BUILDABLEASM)),$(wildcard $(src).cc src/$(src).cc)); do echo $$i; done | sort -u`; do echo $$i; echo ====================; cat $$i; echo; echo; echo; done > $@
 
 asms.txt: $(BUILDABLEASM) always
 	for i in $(BUILDABLEASM); do echo $$i; echo ====================; cat $$i; echo; echo; echo; done > $@
