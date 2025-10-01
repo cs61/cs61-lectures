@@ -5,9 +5,11 @@ asmsrc.txt
 callf[0-9][0-9].s
 condf[0-9][0-9].s
 cppdsf[0-9][0-9].s
+debugme
+loop
 print
 redzonef[0-9][0-9].s
 sanf[0-9][0-9].s
+sum4f[0-9][0-9].s
 vecaccessf[0-9][0-9].s
 vecf[0-9][0-9].s
-vecsumf[0-9][0-9].s

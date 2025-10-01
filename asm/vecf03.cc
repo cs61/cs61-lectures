@@ -1,4 +1,4 @@
-//! -O3 -fno-tree-vectorize
+//! -O3 -fno-tree-vectorize -fno-stack-protector
 #include <cstdio>
 
 int dynamic_memory() {

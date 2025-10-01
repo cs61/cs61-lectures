@@ -1,0 +1,9 @@
+*~
+core*
+log.txt
+*.img
+*.log
+obj
+pset.tgz
+attack
+config.mk

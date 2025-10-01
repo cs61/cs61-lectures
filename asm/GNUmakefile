@@ -1,11 +1,11 @@
-PROGRAMS = print
+PROGRAMS = print debugme loop
 BUILDABLEASM := $(patsubst %.cc,%.s,$(wildcard f*.cc *f*.cc)) \
         $(patsubst src/%.cc,%.s,$(wildcard src/f*.cc src/*f*.cc)) \
         $(patsubst %.cc,%.s,$(wildcard cc*.cc)) \
         $(patsubst src/%.cc,%.s,$(wildcard cc*.cc))
 all: $(PROGRAMS) $(BUILDABLEASM)
 
-BASEPROGRAMS = print
+BASEPROGRAMS = print debugme loop
 ALLPROGRAMS = $(PROGRAMS)
 
 variants = $(1) $(addsuffix -noopt,$(1)) \
@@ -69,27 +69,27 @@ UNSAFEFLAGS := -U_FORTIFY_SOURCE -fno-stack-protector
 # Rules for making executables (runnable programs) from object files
 
 $(BASEPROGRAMS): \
-%: %.o
+%: %.o print_bytes.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^
 
 $(addsuffix -clang,$(BASEPROGRAMS)): \
-%: %.o
+%: %.o print_bytes-clang.o
 	clang++ $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^
 
 $(addsuffix -gcc,$(BASEPROGRAMS)): \
-%: %.o
+%: %.o print_bytes-gcc.o
 	$(CXX_GCC) $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^
 
 $(addsuffix -noopt,$(BASEPROGRAMS)): \
-%: %.o
+%: %.o print_bytes-noopt.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -O0 -o $@ $^
 
 $(addsuffix -gcc-noopt,$(BASEPROGRAMS)): \
-%: %.o
+%: %.o print_bytes-gcc-noopt.o
 	$(CXX_GCC) $(CXXFLAGS) $(LDFLAGS) -O0 -o $@ $^
 
 $(addsuffix -clang-noopt,$(BASEPROGRAMS)): \
-%: %.o
+%: %.o print_bytes-clang-noopt.o
 	clang++ $(CXXFLAGS) $(LDFLAGS) -O0 -o $@ $^
 
 

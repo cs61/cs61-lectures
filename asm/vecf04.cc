@@ -1,4 +1,4 @@
-//! -O1 -fno-tree-vectorize
+//! -O1 -fno-tree-vectorize -fno-stack-protector -fno-exceptions
 #include <vector>
 
 [[gnu::noinline]]
