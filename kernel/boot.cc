@@ -23,7 +23,7 @@
 //   starting in the disk's sector KERNEL_START_SECTOR.
 
 #define SECTORSIZE          512
-#define ELFHDR              ((elf_header*) 0x3000) // scratch space
+#define ELFHDR_ADDR         0x3000 // scratch space
 #define KERNEL_START_SECTOR 1
 
 extern "C" {
@@ -39,15 +39,15 @@ static void boot_readseg(uintptr_t dst, uint32_t src_sect,
 [[noreturn]] void boot() {
     // read 1st page off disk (should include programs as well as header)
     // and check validity
-    boot_readseg((uintptr_t) ELFHDR, KERNEL_START_SECTOR,
-                 PAGESIZE, PAGESIZE);
-    while (ELFHDR->e_magic != ELF_MAGIC) {
+    boot_readseg(ELFHDR_ADDR, KERNEL_START_SECTOR, PAGESIZE, PAGESIZE);
+    elf_header* elfhdr = reinterpret_cast<elf_header*>(ELFHDR_ADDR);
+    while (elfhdr->e_magic != ELF_MAGIC) {
         /* do nothing */
     }
 
     // load each program segment
-    elf_program* ph = (elf_program*) ((uint8_t*) ELFHDR + ELFHDR->e_phoff);
-    elf_program* eph = ph + ELFHDR->e_phnum;
+    elf_program* ph = reinterpret_cast<elf_program*>(ELFHDR_ADDR + elfhdr->e_phoff);
+    elf_program* eph = ph + elfhdr->e_phnum;
     for (; ph < eph; ++ph) {
         boot_readseg(ph->p_va,
                      KERNEL_START_SECTOR + ph->p_offset / SECTORSIZE,
@@ -56,7 +56,7 @@ static void boot_readseg(uintptr_t dst, uint32_t src_sect,
 
     // jump to the kernel
     using kernel_entry_t = void (*)();
-    kernel_entry_t kernel_entry = (kernel_entry_t) ELFHDR->e_entry;
+    kernel_entry_t kernel_entry = reinterpret_cast<kernel_entry_t>(elfhdr->e_entry);
     kernel_entry();
     __builtin_unreachable(); // tell compiler `kernel_entry` does not return
 }
@@ -82,7 +82,7 @@ static void boot_readseg(uintptr_t ptr, uint32_t src_sect,
 
     // clear bss segment
     for (; end_ptr < memsz; ++end_ptr) {
-        *(uint8_t*) end_ptr = 0;
+        *reinterpret_cast<uint8_t*>(end_ptr) = 0;
     }
 }
 
@@ -112,5 +112,6 @@ static void boot_readsect(uintptr_t dst, uint32_t src_sect) {
 
     // then move the data into memory
     boot_waitdisk();
-    insl(0x1F0, (void*) dst, SECTORSIZE/4); // read 128 words from the disk
+    // read 128 words from the disk
+    insl(0x1F0, reinterpret_cast<void*>(dst), SECTORSIZE/4);
 }

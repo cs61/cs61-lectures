@@ -311,8 +311,12 @@ extern volatile int cursorpos;
 
 #define CS_NORMAL           "\x1b[m"
 #define CS_WHITE            "\x1b[1m"
-#define CS_GREEN            "\x1b[32m"
+#define CS_RED              "\x1b[91m"
 #define CS_YELLOW           "\x1b[93m"
+#define CS_GREEN            "\x1b[32m"
+#define CS_CYAN             "\x1b[96m"
+#define CS_BLUE             "\x1b[94m"
+#define CS_PURPLE           "\x1b[35m"
 #define CS_ERROR            "\x1b[41;1m"
 #define CS_SUCCESS          "\x1b[32;1m"
 #define CS_ECHO             "\x1b[36m"

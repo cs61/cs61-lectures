@@ -1,5 +1,5 @@
-#ifndef CHICKADEE_K_PCI_HH
-#define CHICKADEE_K_PCI_HH
+#ifndef WEENSYOS_K_PCI_HH
+#define WEENSYOS_K_PCI_HH
 
 struct pcistate {
     // PCI I/O registers

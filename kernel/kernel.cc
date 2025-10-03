@@ -127,8 +127,8 @@ void process_setup(pid_t pid, const char* program_name) {
 
     // copy instructions and data from program image into process memory
     for (auto seg = pgm.begin(); seg != pgm.end(); ++seg) {
-        memset((void*) seg.va(), 0, seg.size());
-        memcpy((void*) seg.va(), seg.data(), seg.data_size());
+        memset(reinterpret_cast<void*>(seg.va()), 0, seg.size());
+        memcpy(reinterpret_cast<void*>(seg.va()), seg.data(), seg.data_size());
     }
 
     // mark entry point
@@ -259,7 +259,8 @@ uintptr_t syscall(regstate* regs) {
     switch (regs->reg_rax) {
 
     case SYSCALL_PANIC:
-        user_panic(current);    // does not return
+        user_panic(current);
+        break; // will not be reached
 
     case SYSCALL_GETPID:
         return current->pid;

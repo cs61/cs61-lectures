@@ -18,16 +18,17 @@ extern "C" {
 //    We must provide our own implementations.
 
 void* memcpy(void* dst, const void* src, size_t n) {
-    const char* s = (const char*) src;
-    for (char* d = (char*) dst; n > 0; --n, ++s, ++d) {
+    const char* s = reinterpret_cast<const char*>(src);
+    char* d = reinterpret_cast<char*>(dst);
+    for (; n > 0; --n, ++s, ++d) {
         *d = *s;
     }
     return dst;
 }
 
 void* memmove(void* dst, const void* src, size_t n) {
-    const char* s = (const char*) src;
-    char* d = (char*) dst;
+    const char* s = reinterpret_cast<const char*>(src);
+    char* d = reinterpret_cast<char*>(dst);
     if (s < d && s + n > d) {
         s += n, d += n;
         while (n-- > 0) {
@@ -42,7 +43,8 @@ void* memmove(void* dst, const void* src, size_t n) {
 }
 
 void* memset(void* v, int c, size_t n) {
-    for (char* p = (char*) v; n > 0; ++p, --n) {
+    char* p = reinterpret_cast<char*>(v);
+    for (; n > 0; ++p, --n) {
         *p = c;
     }
     return v;
@@ -60,8 +62,8 @@ int memcmp(const void* a, const void* b, size_t n) {
 }
 
 void* memchr(const void* s, int c, size_t n) {
-    const unsigned char* ss;
-    for (ss = (const unsigned char*) s; n != 0; ++ss, --n) {
+    const unsigned char* ss = reinterpret_cast<const unsigned char*>(s);
+    for (; n != 0; ++ss, --n) {
         if (*ss == (unsigned char) c) {
             return (void*) ss;
         }
@@ -559,7 +561,7 @@ void printer::vprintf(const char* format, va_list val) {
             base = 16;
             goto format_unsigned;
         case 'p':
-            num = (uintptr_t) va_arg(val, void*);
+            num = va_arg(val, uintptr_t);
             base = -16;
             flags |= FLAG_ALT | FLAG_ALT2 | FLAG_NUMERIC;
             break;

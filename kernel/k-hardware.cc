@@ -58,7 +58,7 @@ void init_hardware() {
 static void set_app_segment(uint64_t* segment, uint64_t type, int dpl) {
     *segment = type
         | X86SEG_S                    // code/data segment
-        | ((uint64_t) dpl << 45)
+        | (uint64_t(dpl) << 45)
         | X86SEG_P;                   // segment present
 }
 
@@ -69,7 +69,7 @@ static void set_sys_segment(uint64_t* segment, uintptr_t addr, size_t size,
         | ((size - 1) & 0x0FFFFUL)
         | (((size - 1) & 0xF0000UL) << 48)
         | type
-        | ((uint64_t) dpl << 45)
+        | (uint64_t(dpl) << 45)
         | X86SEG_P;                   // segment present
     segment[1] = addr >> 32;
 }
@@ -101,7 +101,7 @@ void init_kernel_memory() {
                     X86SEG_W, 0);
     x86_64_pseudodescriptor gdt;
     gdt.limit = sizeof(gdt_segments[0]) * 3 - 1;
-    gdt.base = (uint64_t) gdt_segments;
+    gdt.base = reinterpret_cast<uint64_t>(gdt_segments);
 
     asm volatile("lgdt %0" : : "m" (gdt.limit));
 
@@ -204,7 +204,7 @@ void init_cpu_hardware() {
     set_app_segment(&gdt_segments[SEGSEL_APP_DATA >> 3],
                     X86SEG_W, 3);
     set_sys_segment(&gdt_segments[SEGSEL_TASKSTATE >> 3],
-                    (uintptr_t) &taskstate, sizeof(taskstate),
+                    reinterpret_cast<uintptr_t>(&taskstate), sizeof(taskstate),
                     X86SEG_TSS, 0);
 
     // taskstate lets the kernel receive interrupts
@@ -213,21 +213,21 @@ void init_cpu_hardware() {
 
     x86_64_pseudodescriptor gdt, idt;
     gdt.limit = sizeof(gdt_segments) - 1;
-    gdt.base = (uint64_t) gdt_segments;
+    gdt.base = reinterpret_cast<uint64_t>(gdt_segments);
     idt.limit = sizeof(interrupt_descriptors) - 1;
-    idt.base = (uint64_t) interrupt_descriptors;
+    idt.base = reinterpret_cast<uint64_t>(interrupt_descriptors);
 
     // load segment descriptor tables
     asm volatile("lgdt %0; ltr %1; lidt %2"
                  :
                  : "m" (gdt.limit),
-                   "r" ((uint16_t) SEGSEL_TASKSTATE),
+                   "r" (uint16_t(SEGSEL_TASKSTATE)),
                    "m" (idt.limit)
                  : "memory", "cc");
 
     // initialize segments
     asm volatile("movw %%ax, %%fs; movw %%ax, %%gs"
-                 : : "a" ((uint16_t) SEGSEL_KERN_DATA));
+                 : : "a" (uint16_t(SEGSEL_KERN_DATA)));
 
 
     // set up control registers
@@ -331,12 +331,14 @@ void check_process_registers(const proc* p) {
 //    are mapped at the expected addresses.
 
 void check_pagetable(x86_64_pagetable* pagetable) {
-    assert(((uintptr_t) pagetable % PAGESIZE) == 0); // must be page aligned
-    assert(vmiter(pagetable, (uintptr_t) exception_entry).pa()
+    // `pagetable` is page-aligned
+    assert((reinterpret_cast<uintptr_t>(pagetable) % PAGESIZE) == 0);
+    // `pagetable` contains some critical mappings
+    assert(vmiter(pagetable, reinterpret_cast<uintptr_t>(exception_entry)).pa()
            == kptr2pa(exception_entry));
-    assert(vmiter(kernel_pagetable, (uintptr_t) pagetable).pa()
+    assert(vmiter(kernel_pagetable, reinterpret_cast<uintptr_t>(pagetable)).pa()
            == kptr2pa(pagetable));
-    assert(vmiter(pagetable, (uintptr_t) kernel_pagetable).pa()
+    assert(vmiter(pagetable, reinterpret_cast<uintptr_t>(kernel_pagetable)).pa()
            == kptr2pa(kernel_pagetable));
 }
 
@@ -369,7 +371,7 @@ bool allocatable_physical_address(uintptr_t pa) {
     extern uint8_t _kernel_end[];
     return !reserved_physical_address(pa)
         && (pa < KERNEL_START_ADDR
-            || pa >= round_up((uintptr_t) _kernel_end, PAGESIZE))
+            || pa >= round_up(reinterpret_cast<uintptr_t>(_kernel_end), PAGESIZE))
         && (pa < KERNEL_STACK_TOP - PAGESIZE
             || pa >= KERNEL_STACK_TOP)
         && pa < MEMSIZE_PHYSICAL;
@@ -802,7 +804,7 @@ void backtracer::check_leaf(uintptr_t rip) {
 
     // “return address” must be near current %rip
     uintptr_t retaddr = deref(rsp_);
-    if ((intptr_t) (retaddr - rip) > 0x10000
+    if (intptr_t(retaddr - rip) > 0x10000
         || (retaddr >= stack_top_ - PAGESIZE && retaddr <= stack_top_)) {
         return;
     }
@@ -906,11 +908,11 @@ int check_keyboard() {
         // Install a temporary page table to carry us through the
         // process of reinitializing memory. This replicates work the
         // bootloader does.
-        x86_64_pagetable* pt = (x86_64_pagetable*) 0x1000;
+        x86_64_pagetable* pt = reinterpret_cast<x86_64_pagetable*>(0x1000UL);
         memset(pt, 0, PAGESIZE * 2);
         pt[0].entry[0] = 0x2000 | PTE_P | PTE_W;
         pt[1].entry[0] = PTE_P | PTE_W | PTE_PS;
-        wrcr3((uintptr_t) pt);
+        wrcr3(reinterpret_cast<uintptr_t>(pt));
         // The soft reboot process doesn't modify memory, so it's
         // safe to pass `multiboot_info` on the kernel stack, even
         // though it will get overwritten as the kernel runs.
@@ -928,15 +930,15 @@ int check_keyboard() {
         } else if (c == 's') {
             argument = "spawn";
         }
-        uintptr_t argument_ptr = (uintptr_t) argument;
+        uintptr_t argument_ptr = reinterpret_cast<uintptr_t>(argument);
         assert(argument_ptr < 0x100000000L);
         multiboot_info[4] = (uint32_t) argument_ptr;
         // restore initial value of data segment for reboot support
         stash_kernel_data(true);
         extern uint8_t _data_start[], _edata[], _kernel_end[];
-        uintptr_t data_size = (uintptr_t) _edata - (uintptr_t) _data_start;
-        uintptr_t zero_size = (uintptr_t) _kernel_end - (uintptr_t) _edata;
-        uint8_t* data_stash = (uint8_t*) (SYMTAB_ADDR - data_size);
+        uintptr_t data_size = reinterpret_cast<uintptr_t>(_edata) - reinterpret_cast<uintptr_t>(_data_start);
+        uintptr_t zero_size = reinterpret_cast<uintptr_t>(_kernel_end) - reinterpret_cast<uintptr_t>(_edata);
+        uint8_t* data_stash = reinterpret_cast<uint8_t*>(SYMTAB_ADDR - data_size);
         memcpy(_data_start, data_stash, data_size);
         memset(_edata, 0, zero_size);
         // restart kernel
@@ -1131,7 +1133,7 @@ program_image::program_image(int program_number) {
     elf_ = nullptr;
     if (program_number >= 0
         && size_t(program_number) < sizeof(ramimages) / sizeof(ramimages[0])) {
-        elf_ = (elf_header*) ramimages[program_number].begin;
+        elf_ = reinterpret_cast<elf_header*>(ramimages[program_number].begin);
         assert(elf_->e_magic == ELF_MAGIC);
     } else {
         elf_ = nullptr;
@@ -1187,7 +1189,7 @@ size_t program_image_segment::size() const {
     return ph_->p_memsz;
 }
 const char* program_image_segment::data() const {
-    return (const char*) elf_ + ph_->p_offset;
+    return reinterpret_cast<const char*>(elf_) + ph_->p_offset;
 }
 size_t program_image_segment::data_size() const {
     return ph_->p_filesz;
@@ -1271,8 +1273,8 @@ void __cxa_atexit(...) {
 static void stash_kernel_data(bool reboot) {
     // stash initial value of data segment for soft-reboot support
     extern uint8_t _data_start[], _edata[], _kernel_end[];
-    uintptr_t data_size = (uintptr_t) _edata - (uintptr_t) _data_start;
-    uint8_t* data_stash = (uint8_t*) (SYMTAB_ADDR - data_size);
+    uintptr_t data_size = reinterpret_cast<uintptr_t>(_edata) - reinterpret_cast<uintptr_t>(_data_start);
+    uint8_t* data_stash = reinterpret_cast<uint8_t*>(SYMTAB_ADDR - data_size);
     if (reboot) {
         memcpy(_data_start, data_stash, data_size);
         memset(_edata, 0, _kernel_end - _edata);

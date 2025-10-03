@@ -50,14 +50,14 @@ void vmiter::next() {
 }
 
 int vmiter::try_map(uintptr_t pa, int perm) {
-    if (pa == (uintptr_t) -1 && perm == 0) {
+    if (pa == uintptr_t(-1) && perm == 0) {
         pa = 0;
     }
     // virtual address is page-aligned
     assert((va_ % PAGESIZE) == 0, "vmiter::try_map va not aligned");
     if (perm & PTE_P) {
         // if mapping present, physical address is page-aligned
-        assert(pa != (uintptr_t) -1, "vmiter::try_map mapping nonexistent pa");
+        assert(pa != uintptr_t(-1), "vmiter::try_map mapping nonexistent pa");
         assert((pa & PTE_PAMASK) == pa, "vmiter::try_map pa not aligned");
     } else {
         assert((pa & PTE_P) == 0, "vmiter::try_map invalid pa");
@@ -120,7 +120,7 @@ void ptiter::down(bool skip) {
             }
             lbits_ -= PAGEINDEXBITS;
             uintptr_t pa = *pep_ & PTE_PAMASK;
-            x86_64_pagetable* pt = pa2kptr<x86_64_pagetable*>(pa);
+            x86_64_pagetable* pt = reinterpret_cast<x86_64_pagetable*>(pa);
             pep_ = &pt->entry[(va_ >> lbits_) & 0x1FF];
             continue;
         }

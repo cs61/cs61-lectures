@@ -27,10 +27,12 @@ class vmiter {
     // Return the number of bytes left in this mapping range
     // (If present() and N < range_size(), (*this + N).pa() == this.pa() + N.)
     inline size_t range_size() const;
+    // Return true iff `va() <= VA_LOWMAX` (is a low canonical address)
+    inline bool low() const;
     // Return true iff iteration has completed (reached last va)
     inline bool done() const;
     // Return physical address mapped at `this->va()`,
-    // or `(uintptr_t) -1` if `this->va()` is unmapped
+    // or `uintptr_t(-1)` if `this->va()` is unmapped
     inline uint64_t pa() const;
     // Return a kernel-accessible pointer corresponding to `this->pa()`,
     // or `nullptr` if `this->va()` is unmapped
@@ -129,8 +131,8 @@ class vmiter {
 // returning them in depth-first order.
 // This is mainly useful when freeing a page table, as in:
 // ```
-// for (ptiter it(pt); !it.done(); it.next()) {
-//     kfree(it.kptr());
+// for (ptiter it(pt); it.low(); it.next()) {
+//     it.kfree_ptp();
 // }
 // kfree(pt);
 // ```
@@ -159,6 +161,8 @@ class ptiter {
     inline uintptr_t last_va() const;
     // Return size of this mapping range (`last_va() - va()`)
     inline size_t range_size() const;
+    // Return true iff `va() <= VA_LOWMAX` (is low canonical)
+    inline bool low() const;
     // Return level of current page table page (0-2)
     inline int level() const;
 
@@ -201,6 +205,9 @@ inline uintptr_t vmiter::last_va() const {
 }
 inline size_t vmiter::range_size() const {
     return last_va() - va();
+}
+inline bool vmiter::low() const {
+    return va_ <= VA_LOWMAX;
 }
 inline uint64_t vmiter::pa() const {
     if (*pep_ & PTE_P) {
@@ -299,8 +306,8 @@ inline void vmiter::invalidate() {
     invlpg(va());
 }
 inline void vmiter::invalidate_all() {
-    if (rdcr3() == kptr2pa(pt_)) {
-        wrcr3(kptr2pa(pt_));
+    if (rdcr3() == reinterpret_cast<uintptr_t>(pt_)) {
+        wrcr3(reinterpret_cast<uintptr_t>(pt_));
     }
 }
 
@@ -315,6 +322,9 @@ inline uintptr_t ptiter::last_va() const {
 }
 inline size_t ptiter::range_size() const {
     return last_va() - va();
+}
+inline bool ptiter::low() const {
+    return va_ <= VA_LOWMAX;
 }
 inline bool ptiter::done() const {
     return lbits_ == vmiter::done_lbits;
