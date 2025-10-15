@@ -29,7 +29,7 @@ proc ptable[MAXNPROC];          // array of process descriptors
 proc* current;                  // pointer to currently executing proc
 
 #define HZ 100                  // timer interrupt frequency (interrupts/sec)
-[[maybe_unused]] static std::atomic<unsigned long> ticks; // # timer interrupts so far
+[[maybe_unused]] std::atomic<unsigned long> ticks; // # timer interrupts so far
 
 
 // Memory state - see `kernel.hh`
@@ -83,6 +83,9 @@ void kernel_start(const char* command) {
     }
     if (!program_image(command).empty()) {
         process_setup(1, command);
+    } else if (strcmp(command, "pipe") == 0) {
+        process_setup(1, "pipewriter");
+        process_setup(2, "pipereader");
     } else {
         process_setup(1, "alice");
         process_setup(2, "eve");
@@ -238,6 +241,11 @@ void exception(regstate* regs) {
 //
 //    Note that hardware interrupts are disabled when the kernel is running.
 
+int syscall_pipewritec(int ch);
+int syscall_pipereadc();
+ssize_t syscall_pipewrite(const char* buf, size_t sz);
+ssize_t syscall_piperead(char* buf, size_t sz);
+
 uintptr_t syscall(regstate* regs) {
     // Copy the saved registers into the `current` process descriptor.
     current->regs = *regs;
@@ -283,6 +291,24 @@ uintptr_t syscall(regstate* regs) {
         return 0;
     }
 
+    case SYSCALL_PIPEWRITEC:
+        return syscall_pipewritec(current->regs.reg_rdi);
+
+    case SYSCALL_PIPEREADC:
+        return syscall_pipereadc();
+
+    case SYSCALL_PIPEWRITE:
+        return syscall_pipewrite(
+            reinterpret_cast<const char*>(current->regs.reg_rdi),
+            current->regs.reg_rsi
+        );
+
+    case SYSCALL_PIPEREAD:
+        return syscall_piperead(
+            reinterpret_cast<char*>(current->regs.reg_rdi),
+            current->regs.reg_rsi
+        );
+
     default:
         proc_panic(current, "Unhandled system call %ld (pid=%d, rip=%p)!\n",
                    regs->reg_rax, current->pid, regs->reg_rip);
@@ -290,6 +316,67 @@ uintptr_t syscall(regstate* regs) {
     }
 
     panic("Should not get here!\n");
+}
+
+
+// pipe buffer
+
+char pipebuf[1];
+size_t pipebuf_len = 0;
+
+int syscall_pipewritec(int ch) {
+    // See `sys_pipewritec` in `u-lib.cc` for specification.
+    if (ch < 0 || ch > 255) {
+        return E_INVAL;
+    } else if (pipebuf_len == 1) {
+        // kernel buffer full, process should try again
+        return E_AGAIN;
+    }
+    // write byte
+    pipebuf[0] = ch;
+    pipebuf_len = 1;
+    return 1;
+}
+
+int syscall_pipereadc() {
+    // See `sys_pipereadc` in `u-lib.cc` for specification.
+    if (pipebuf_len == 0) {
+        // kernel buffer empty, process should try again
+        return E_AGAIN;
+    }
+    // read one byte
+    pipebuf_len = 0;
+    return static_cast<unsigned char>(pipebuf[0]);
+}
+
+ssize_t syscall_pipewrite(const char* buf, size_t sz) {
+    // See `sys_pipewrite` in `u-lib.cc` for specification.
+    if (sz == 0) {
+        // nothing to write
+        return 0;
+    } else if (pipebuf_len == 1) {
+        // kernel buffer full, process should try again
+        return E_AGAIN;
+    }
+    // write one byte
+    pipebuf[0] = buf[0];
+    pipebuf_len = 1;
+    return 1;
+}
+
+ssize_t syscall_piperead(char* buf, size_t sz) {
+    // See `sys_piperead` in `u-lib.cc` for specification.
+    if (sz == 0) {
+        // no room to read
+        return 0;
+    } else if (pipebuf_len == 0) {
+        // kernel buffer empty, process should try again
+        return E_AGAIN;
+    }
+    // read one byte
+    buf[0] = pipebuf[0];
+    pipebuf_len = 0;
+    return 1;
 }
 
 

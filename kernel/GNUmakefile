@@ -72,7 +72,7 @@ PROCESS_LINKER_FILES = build/process.ld
 RUNCMD_LASTWORD := $(filter run-%,$(MAKECMDGOALS))
 ifeq ($(words $(RUNCMD_LASTWORD)),1)
 RUNCMD_LASTWORD := $(lastword $(subst -, ,$(RUNCMD_LASTWORD)))
-ifneq ($(filter p-$(RUNCMD_LASTWORD),$(PROCESSES) p-friends),)
+ifneq ($(filter p-$(RUNCMD_LASTWORD),$(PROCESSES) p-friends p-pipe),)
 RUNSUFFIX := $(RUNCMD_LASTWORD)
 WEENSYOS_FIRST_PROCESS := $(RUNCMD_LASTWORD)
 endif
@@ -135,7 +135,7 @@ $(OBJDIR)/k-foreachimage.h: build/mkforeachimage.awk $(PROCESSES_BUILDSTAMP)
 	$(call run,awk -f build/mkforeachimage.awk -v processes="$(PROCESSES)" > $@,CREATE $@)
 
 $(OBJDIR)/firstprocess.gdb:
-	$(call run,if test "$(WEENSYOS_FIRST_PROCESS)" = friends; then echo "add-symbol-file obj/p-alice.full 0x100000"; echo "add-symbol-file obj/p-eve.full 0x140000"; else echo "add-symbol-file obj/p-$(WEENSYOS_FIRST_PROCESS).full 0x100000"; fi > $@,CREATE $@)
+	$(call run,if test "$(WEENSYOS_FIRST_PROCESS)" = friends; then echo "add-symbol-file obj/p-alice.full 0x100000"; echo "add-symbol-file obj/p-eve.full 0x140000"; elif test "$(WEENSYOS_FIRST_PROCESS)" = pipe; then echo "add-symbol-file obj/p-pipewriter.full 0x100000"; echo "add-symbol-file obj/p-pipereader.full 0x140000"; elif test "$(WEENSYOS_FIRST_PROCESS)" = eve -o "$(WEENSYOS_FIRST_PROCESS)" = pipereader -o "$(WEENSYOS_FIRST_PROCESS)" = spawn; then echo "add-symbol-file obj/p-$(WEENSYOS_FIRST_PROCESS).full 0x140000"; else echo "add-symbol-file obj/p-$(WEENSYOS_FIRST_PROCESS).full 0x100000"; fi > $@,CREATE $@)
 
 $(OBJDIR)/k-hardware.ko: $(OBJDIR)/k-foreachimage.h
 
@@ -150,7 +150,7 @@ $(OBJDIR)/kernel.full: $(KERNEL_OBJS) $(PROCESS_BINARIES) $(KERNEL_LINKER_FILES)
 $(OBJDIR)/p-%.full: $(OBJDIR)/p-%.uo $(PROCESS_LIB_OBJS) $(PROCESS_LINKER_FILES)
 	$(call link,-T $(PROCESS_LINKER_FILES) -o $@ $< $(PROCESS_LIB_OBJS),LINK)
 
-$(OBJDIR)/p-eve.full $(OBJDIR)/p-spawn.full: \
+$(OBJDIR)/p-eve.full $(OBJDIR)/p-spawn.full $(OBJDIR)/p-pipereader.full: \
 $(OBJDIR)/p-%.full: $(OBJDIR)/p-%.uo $(PROCESS_LIB_OBJS) build/process2.ld
 	$(call link,-T build/process2.ld -o $@ $< $(PROCESS_LIB_OBJS),LINK)
 

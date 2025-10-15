@@ -43,6 +43,45 @@ int sys_page_alloc(void* addr) {
 }
 
 
+// sys_pipewritec(ch)
+//    Write a single byte `ch` into the system pipe.
+//    Returns number of bytes written or a negative error code (if, for
+//    instance, the system pipe’s data transfer buffer is full).
+[[gnu::noinline]]
+int sys_pipewritec(int ch) {
+    return make_syscall(SYSCALL_PIPEWRITEC, ch);
+}
+
+// sys_pipereadc()
+//    Read a byte from the system pipe.
+//    Bytes read are removed from the system pipe.
+//    Returns the byte read (0-255) a negative error code (if, for
+//    instance, the system pipe’s data transfer buffer is empty).
+[[gnu::noinline]]
+int sys_pipereadc() {
+    return make_syscall(SYSCALL_PIPEREADC);
+}
+
+// sys_pipewrite(buf, sz)
+//    Copy up to `sz` bytes of data from `buf` into the system pipe.
+//    Returns number of bytes written or a negative error code (if, for
+//    instance, the system pipe’s data transfer buffer is full).
+[[gnu::noinline]]
+ssize_t sys_pipewrite(const void* buf, size_t sz) {
+    return make_syscall(SYSCALL_PIPEWRITE, (uintptr_t) buf, sz);
+}
+
+// sys_piperead(buf, sz)
+//    Read up to `sz` bytes of data from the system pipe into `buf`.
+//    Bytes read are removed from the system pipe.
+//    Returns number of bytes read or a negative error code (if, for
+//    instance, the system pipe’s data transfer buffer is empty).
+[[gnu::noinline]]
+ssize_t sys_piperead(void* buf, size_t sz) {
+    return make_syscall(SYSCALL_PIPEREAD, (uintptr_t) buf, sz);
+}
+
+
 // sys_panic(msg)
 //    Panic.
 [[noreturn, gnu::noinline]]

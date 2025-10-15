@@ -895,6 +895,7 @@ void error_vprintf(const char* format, va_list val) {
 //    * 'a': Soft reboot to run p-alice.
 //    * 'e': Soft reboot to run p-eve.
 //    * 'f': Soft reboot to run p-alice and p-eve.
+//    * 'p': Soft reboot to run p-pipewriter and p-pipereader.
 //    * 'r': Soft reboot to run p-recurse.
 //    * 's': Soft reboot to run p-spawn.
 //    * 'q' or Control-C: Exit the virtual machine.
@@ -925,6 +926,8 @@ int check_keyboard() {
             argument = "eve";
         } else if (c == 'f' || c == 'x') {
             argument = "friends";
+        } else if (c == 'p') {
+            argument = "pipe";
         } else if (c == 'r') {
             argument = "recurse";
         } else if (c == 's') {

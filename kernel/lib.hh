@@ -3,6 +3,7 @@
 #include "types.h"
 #include <new>              // for placement new
 #include <type_traits>
+#include <atomic>
 #define BUFSIZ 1024
 
 // lib.hh
@@ -251,22 +252,29 @@ inline uint32_t crc32c(const void* buf, size_t sz) {
 // register, and other arguments are arranged according to the system
 // call calling convention.
 
-#define SYSCALL_GETPID          1
-#define SYSCALL_YIELD           2
-#define SYSCALL_PANIC           3
-#define SYSCALL_GETSYSNAME      4
-#define SYSCALL_WRITE           5
-#define SYSCALL_PAGE_ALLOC      6
-#define SYSCALL_EXIT            7
+#define SYSCALL_GETPID      1
+#define SYSCALL_YIELD       2
+#define SYSCALL_PANIC       3
+#define SYSCALL_GETSYSNAME  4
+#define SYSCALL_WRITE       5
+#define SYSCALL_PAGE_ALLOC  6
+#define SYSCALL_EXIT        7
+#define SYSCALL_PIPEWRITEC  8
+#define SYSCALL_PIPEREADC   9
+#define SYSCALL_PIPEWRITE   10
+#define SYSCALL_PIPEREAD    11
+
+const char* syscall_name(int syscall);
 
 
 // System call error return values
 
-#define E_INVAL         -22        // Invalid argument
-#define E_OVERFLOW      -75        // Value too large for data type
-#define E_RANGE         -34        // Out of range
+#define E_AGAIN             -11    // Try again
+#define E_INVAL             -22    // Invalid argument
+#define E_OVERFLOW          -75    // Value too large for data type
+#define E_RANGE             -34    // Out of range
 
-#define E_MINERROR      -100
+#define E_MINERROR          -100
 
 inline bool is_error(uintptr_t r) {
     return r >= static_cast<uintptr_t>(E_MINERROR);
@@ -276,8 +284,17 @@ inline bool is_error(uintptr_t r) {
 // Maximum number of processes
 
 #ifndef MAXNPROC
-#define MAXNPROC         16
+#define MAXNPROC            16
 #endif
+
+
+// Timing
+
+// timer interrupt frequency (ticks/sec)
+#define HZ                  100
+
+// number of ticks since boot (updated by kernel)
+extern std::atomic<unsigned long> ticks;
 
 
 // CGA console printing

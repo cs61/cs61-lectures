@@ -90,6 +90,11 @@ int sys_getsysname(char* buf);
 ssize_t sys_write(const char* msg, size_t n);
 int sys_page_alloc(void* addr);
 
+int sys_pipewritec(int ch);
+int sys_pipereadc();
+ssize_t sys_pipewrite(const void* buf, size_t sz);
+ssize_t sys_piperead(void* buf, size_t sz);
+
 [[noreturn]] void sys_panic(const char* msg);
 
 #endif
