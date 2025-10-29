@@ -7,6 +7,7 @@
 #include <cmath>
 #include <ctime>
 #include <cassert>
+#include <unistd.h>
 #include <getopt.h>
 extern "C" {
 #include <cblas.h>

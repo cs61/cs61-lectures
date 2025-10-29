@@ -8,6 +8,8 @@ O ?= 3
 PTHREAD = 1
 PIE ?= 0
 SAN ?= 0
+LIBS ?= -lblas
+X86 ?= 0
 include ../common/rules.mk
 -include config.mk
 
