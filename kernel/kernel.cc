@@ -29,7 +29,7 @@ proc ptable[MAXNPROC];          // array of process descriptors
 proc* current;                  // pointer to currently executing proc
 
 #define HZ 100                  // timer interrupt frequency (interrupts/sec)
-[[maybe_unused]] std::atomic<unsigned long> ticks; // # timer interrupts so far
+[[maybe_unused]] extern std::atomic<unsigned long> ticks; // # timer interrupts so far
 
 
 // Memory state - see `kernel.hh`
