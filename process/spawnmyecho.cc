@@ -1,4 +1,6 @@
-#include "helpers.hh"
+#include <cstdio>
+#include <cassert>
+#include <unistd.h>
 #include <spawn.h>
 
 int main() {

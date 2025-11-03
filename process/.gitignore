@@ -1,4 +1,5 @@
 childpipe
+execmyecho
 fork1
 fork2
 fork3
@@ -11,9 +12,6 @@ minishell
 myecho
 pipesizer
 processex
-selfpipe
-syscall-forkmix
-waitdemo
 racer-alarm
 racer-block
 racer-blockvar
@@ -22,3 +20,7 @@ racer-selectpipe
 racer-selfpipe
 racer-signalfd
 racer-waitblockwait
+selfpipe
+spawnmyecho
+syscall-forkmix
+waitdemo

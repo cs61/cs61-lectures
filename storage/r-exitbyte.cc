@@ -13,10 +13,9 @@ int exit_getc(int fd) {
         ssize_t nr = read(fd, &ch, 1);
         if (nr == 1) {
             exit(ch);
-        } else {
-            // Terminate abnormally
-            abort();
         }
+        // Terminate abnormally
+        abort();
     } else if (p < 0) {
         return -1;
     }
@@ -26,9 +25,8 @@ int exit_getc(int fd) {
     if (w == p && WIFEXITED(status)) {
         unsigned char ch = WEXITSTATUS(status);
         return ch;
-    } else {
-        return -1;
     }
+    return -1;
 }
 
 

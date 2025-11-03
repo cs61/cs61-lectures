@@ -1,11 +1,12 @@
 PROGRAMS = forkmix syscall-forkmix forkorder minishell \
-	makezombies pipesizer selfpipe childpipe waitdemo \
-	racer-poll racer-block racer-blockvar racer-selfpipe \
+	myecho execmyecho spawnmyecho \
+	makezombies pipesizer selfpipe childpipe waitdemo
+RACERPROGRAMS = racer-poll racer-block racer-blockvar racer-selfpipe \
 	racer-alarm racer-selectpipe racer-waitblockwait
 
-all: $(PROGRAMS)
+all: $(PROGRAMS) $(RACERPROGRAMS)
 
-ALLPROGRAMS = $(PROGRAMS) matrixmultiply-blas
+ALLPROGRAMS = $(PROGRAMS) $(RACERPROGRAMS)
 CONFIGMK ?= config.mk
 
 O ?= 3
@@ -15,13 +16,11 @@ include ../common/rules.mk
 %.o: %.cc $(BUILDSTAMP)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEPCFLAGS) $(O) -o $@ -c $<
 
-processex fork1 fork2 fork3 forkmix syscall-forkmix forkorder minishell \
-makezombies pipesizer selfpipe childpipe waitdemo: \
+$(PROGRAMS): \
 %: %.o print_bytes.o
 	$(CXX) $(CXXFLAGS) $(O) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-racer-poll racer-block racer-blockvar racer-selfpipe \
-racer-alarm racer-selectpipe racer-signalfd racer-threads racer-waitblockwait: \
+$(RACERPROGRAMS) racer-signalfd racer-threads: \
 %: %.o racer.o print_bytes.o
 	$(CXX) $(CXXFLAGS) $(O) $(LDFLAGS) -o $@ $^ $(LIBS)
 
