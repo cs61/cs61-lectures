@@ -46,6 +46,14 @@ void fprint_bytes_ascii(FILE* f, const void* ptr, size_t size);
     fprint_bytes_ascii((f), &(object), sizeof((object)))
 
 
+// timestamp()
+//    Return the current monotonic time.
+inline double timestamp() {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec + (double) ts.tv_nsec * 1e-9;
+}
+
 // cputime()
 //    Return the amount of CPU time this process has taken so far.
 inline double cputime() {

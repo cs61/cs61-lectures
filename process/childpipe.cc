@@ -22,9 +22,7 @@ int main() {
         exit(0);
     }
 
-    // Parent: Read all messages from child; exit when child
-    // is done
-    close(pfd[1]); // Parent does not write!!!!
+    // Parent: Read all messages from child; exit when child is done
     while (true) {
         char buf[BUFSIZ];
         ssize_t nr = read(pfd[0], buf, sizeof(buf));
