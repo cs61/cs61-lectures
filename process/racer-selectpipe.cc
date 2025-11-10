@@ -40,8 +40,8 @@ int main(int argc, char** argv) {
     assert(wp == 0 || wp == p1);
     double elapsed = timestamp() - start_time;
     if (elapsed >= timeout) {
-        printf("SLOW%s\n", racer_status(elapsed, wp, status).c_str());
+        printf("FAIL%s\n", racer_status(elapsed, wp, status).c_str());
     } else {
-        printf("quick%s\n", racer_status(elapsed, wp, status).c_str());
+        printf("ok%s\n", racer_status(elapsed, wp, status).c_str());
     }
 }

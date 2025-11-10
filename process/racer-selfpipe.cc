@@ -35,11 +35,11 @@ int main(int argc, char** argv) {
     r = setitimer(ITIMER_REAL, &itimer, nullptr);
     assert(r >= 0);
 
-    // `read` will either succeed or be interrupted by a signal
-    // (either SIGCHLD or SIGALRM); we don’t care which!
+    // `read` will eventually succeed; we don’t care whether SIGCHLD or
+    // SIGALRM happens first!
     char c;
-    ssize_t n = read(signalpipe[0], &c, 1);
-    (void) n;
+    while (read(signalpipe[0], &c, 1) <= 0) {
+    }
 
     // Print results
     int status;
@@ -47,8 +47,8 @@ int main(int argc, char** argv) {
     assert(wp == 0 || wp == p1);
     double elapsed = timestamp() - start_time;
     if (elapsed >= timeout) {
-        printf("SLOW%s\n", racer_status(elapsed, wp, status).c_str());
+        printf("FAIL%s\n", racer_status(elapsed, wp, status).c_str());
     } else {
-        printf("quick%s\n", racer_status(elapsed, wp, status).c_str());
+        printf("ok%s\n", racer_status(elapsed, wp, status).c_str());
     }
 }
