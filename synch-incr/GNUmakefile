@@ -6,7 +6,6 @@ all: $(PROGRAMS)
 
 ALLPROGRAMS = $(PROGRAMS)
 CONFIGMK ?= config.mk
-LDFLAGS = -L/opt/gcc/lib64
 
 O ?= 3
 PTHREAD ?= 1
