@@ -10,6 +10,7 @@ CONFIGMK ?= config.mk
 O ?= 3
 PTHREAD ?= 1
 SAN ?= 0
+X86 ?= 0
 include ../common/rules.mk
 -include $(CONFIGMK)
 
