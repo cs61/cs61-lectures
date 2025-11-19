@@ -127,7 +127,7 @@ cs61-lectures
 cs61-user@a15e6c4c8dbe:~$ echo "Hello, world"
 Hello, world
 cs61-user@a15e6c4c8dbe:~$ cs61-docker-version
-23
+24
 cs61-user@a15e6c4c8dbe:~$ exit
 exit
 $ 

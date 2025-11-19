@@ -32,6 +32,8 @@ RUN apt-get -y install\
  liblapack-dev\
  liblapack-doc\
  libstdc++-14-doc\
+ libstdc++-14-pic\
+ libstdc++6-14-dbg\
  make\
  make-doc
 
@@ -92,6 +94,9 @@ RUN apt-get -y install\
  gdb-multiarch\
  libc6:amd64\
  libstdc++6:amd64\
+ libstdc++-14-dev:amd64\
+ libstdc++-14-pic:amd64\
+ libstdc++6-14-dbg:amd64\
  libasan8:amd64\
  libtsan2:amd64\
  libubsan1:amd64\
@@ -129,7 +134,7 @@ RUN useradd -m -s /bin/bash -u "${UID}" cs61-user &&\
  echo "cs61-user ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/cs61-init
 
 # create binary reporting version of dockerfile
-RUN (echo '#\!/bin/sh'; echo 'if test "x$1" = x-n; then echo 23; else echo 23.arm64; fi') > /usr/bin/cs61-docker-version; chmod ugo+rx,u+w,go-w /usr/bin/cs61-docker-version
+RUN (echo '#\!/bin/sh'; echo 'if test "x$1" = x-n; then echo 24; else echo 24.arm64; fi') > /usr/bin/cs61-docker-version; chmod ugo+rx,u+w,go-w /usr/bin/cs61-docker-version
 
 # git build arguments
 ARG USER=CS61\ User
