@@ -1,4 +1,5 @@
-PROGRAMS = intgen intsort intsort-binsearch intsort-list intsort-multiset intsort-vector
+PROGRAMS = intgen arraysum \
+	intsort intsort-binsearch intsort-list intsort-multiset intsort-vector
 all: $(PROGRAMS)
 
 include ../common/rules.mk
