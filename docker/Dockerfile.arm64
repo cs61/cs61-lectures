@@ -90,7 +90,7 @@ RUN apt-get -y install\
 
 # install GCC-related packages for amd64
 RUN apt-get -y install\
- g++-15-x86-64-linux-gnu\
+ g++-x86-64-linux-gnu\
  gdb-multiarch\
  libc6:amd64\
  libstdc++6:amd64\
@@ -106,9 +106,12 @@ RUN apt-get -y install\
  qemu-user
 
 # link x86-64 versions of common tools into /usr/x86_64-linux-gnu/bin
-RUN for i in addr2line c++filt cpp g++ gcc gcov gcov-dump gcov-tool size strings; do \
-        ln -s /usr/bin/x86_64-linux-gnu-$i /usr/x86_64-linux-gnu/bin/$i; done &&\
- ln -s /usr/bin/gdb-multiarch /usr/x86_64-linux-gnu/bin/gdb
+RUN for i in `cd /usr/bin; echo x86_64-linux-gnu-*`; do \
+    j=/usr/x86_64-linux-gnu/bin/`echo $i | sed 's/^x86_64-linux-gnu-//'`;\
+    test -e $j || ln -s ../../bin/$i $j; done &&\
+ ln -s /usr/bin/gdb-multiarch /usr/x86_64-linux-gnu/bin/gdb;\
+ test -e /usr/x86_64-linux-gnu/bin/cc || ln -s gcc /usr/x86_64-linux-gnu/bin/cc;\
+ test -e /usr/x86_64-linux-gnu/bin/c++ || ln -s g++ /usr/x86_64-linux-gnu/bin/c++
 
 # install programs useful for disk images
 RUN apt-get -y install\
@@ -129,7 +132,7 @@ RUN useradd -m -s /bin/bash -u "${UID}" cs61-user &&\
  echo "cs61-user ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/cs61-init
 
 # create binary reporting version of dockerfile
-RUN (echo '#\!/bin/sh'; echo 'if test "x$1" = x-n; then echo 25; else echo 25.arm64; fi') > /usr/bin/cs61-docker-version; chmod ugo+rx,u+w,go-w /usr/bin/cs61-docker-version
+RUN (echo '#\!/bin/sh'; echo 'if test "x$1" = x-n; then echo 26; else echo 26.arm64; fi') > /usr/bin/cs61-docker-version; chmod ugo+rx,u+w,go-w /usr/bin/cs61-docker-version
 
 # git build arguments
 ARG USER=CS61\ User
