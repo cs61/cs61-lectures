@@ -44,13 +44,14 @@ int main(int argc, char** argv) {
     auto tstamp0 = std::chrono::steady_clock::now();
 
     // sum array at positions read from input
-    size_t sum = 0, ninvalid = 0;
+    size_t sum = 0;
+    int bound = 0;
     int input;
     while (fscanf(stdin, "%d", &input) == 1) {
         if (input >= 0 && input < n) {
             sum += a[input];
         } else {
-            ++ninvalid;
+            bound = std::max(bound, input + 1);
         }
     }
 
@@ -60,10 +61,11 @@ int main(int argc, char** argv) {
 
     // print
     std::cout << std::format("sum:      {}\ntime:     {}\n", sum, elapsed);
-    if (ninvalid != 0) {
-        std::cout << std::format("out of range: {}\n", ninvalid);
+    if (bound != 0) {
+        std::cout << std::format("*** input out of range, try `-n {}`\n", bound);
     }
-    return ninvalid == 0 ? 0 : 1;
+    delete[] a;
+    return bound == 0 ? 0 : 1;
 }
 
 

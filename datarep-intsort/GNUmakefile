@@ -1,6 +1,7 @@
 PROGRAMS = intgen arraysum \
 	intsort intsort-binsearch intsort-list intsort-multiset intsort-vector
 all: $(PROGRAMS)
+X86 ?= 0
 
 include ../common/rules.mk
 
