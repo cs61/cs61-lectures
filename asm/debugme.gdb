@@ -1,4 +1,6 @@
 set arch i386:x86-64
+set sysroot /
+set debuginfod enabled on
 
 init-if-undefined $fun_continue = 0
 init-if-undefined $fun_file = ""
