@@ -87,7 +87,12 @@ pid_t sys_getpid();
 int sys_yield();
 
 int sys_getsysname(char* buf);
+
 ssize_t sys_write(const char* msg, size_t n);
+inline ssize_t sys_write(const char* msg) {
+    return sys_write(msg, strlen(msg));
+}
+
 int sys_page_alloc(void* addr);
 
 int sys_pipewritec(int ch);
