@@ -270,9 +270,13 @@ const char* syscall_name(int syscall);
 // System call error return values
 
 #define E_AGAIN             -11    // Try again
+#define E_CHILD             -10    // No child processes
 #define E_INVAL             -22    // Invalid argument
+#define E_NOMEM             -12    // Out of memory
 #define E_OVERFLOW          -75    // Value too large for data type
+#define E_PERM              -1     // Operation not permitted
 #define E_RANGE             -34    // Out of range
+#define E_SRCH              -3     // No such process
 
 #define E_MINERROR          -100
 

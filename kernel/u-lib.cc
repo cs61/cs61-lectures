@@ -81,6 +81,17 @@ ssize_t sys_piperead(void* buf, size_t sz) {
     return make_syscall(SYSCALL_PIPEREAD, (uintptr_t) buf, sz);
 }
 
+// sys_spawn(program)
+//    Start a new process running `program` and return its PID.
+[[gnu::noinline]]
+pid_t sys_spawn(const char* program) {
+    (void) program;
+    make_syscall(SYSCALL_PANIC, (uintptr_t) "sys_spawn not implemented yet!");
+
+    while (true) {
+    }
+}
+
 
 // sys_panic(msg)
 //    Panic.

@@ -1,9 +1,7 @@
 #include "u-lib.hh"
 
 void process_main() {
-    pid_t alice_pid = 0;
-    sys_panic("Spawn system call not implemented!");
-    // alice_pid = sys_spawn("alice");
+    pid_t alice_pid = sys_spawn("alice");
 
     unsigned n = 0;
     while (true) {

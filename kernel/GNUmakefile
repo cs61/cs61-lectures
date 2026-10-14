@@ -150,7 +150,7 @@ $(OBJDIR)/kernel.full: $(KERNEL_OBJS) $(PROCESS_BINARIES) $(KERNEL_LINKER_FILES)
 $(OBJDIR)/p-%.full: $(OBJDIR)/p-%.uo $(PROCESS_LIB_OBJS) $(PROCESS_LINKER_FILES)
 	$(call link,-T $(PROCESS_LINKER_FILES) -o $@ $< $(PROCESS_LIB_OBJS),LINK)
 
-$(OBJDIR)/p-eve.full $(OBJDIR)/p-spawn.full $(OBJDIR)/p-pipereader.full: \
+$(OBJDIR)/p-eve.full $(OBJDIR)/p-pipereader.full: \
 $(OBJDIR)/p-%.full: $(OBJDIR)/p-%.uo $(PROCESS_LIB_OBJS) build/process2.ld
 	$(call link,-T build/process2.ld -o $@ $< $(PROCESS_LIB_OBJS),LINK)
 

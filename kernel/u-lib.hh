@@ -99,6 +99,7 @@ int sys_pipewritec(int ch);
 int sys_pipereadc();
 ssize_t sys_pipewrite(const void* buf, size_t sz);
 ssize_t sys_piperead(void* buf, size_t sz);
+pid_t sys_spawn(const char* program);
 
 [[noreturn]] void sys_panic(const char* msg);
 
