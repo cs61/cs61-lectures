@@ -104,11 +104,6 @@ void kernel_start(const char* command) {
 void process_setup(pid_t pid, const char* program_name) {
     init_process(&ptable[pid], 0);
 
-    // We expect all process memory to reside between
-    // first_addr and last_addr.
-    uintptr_t first_addr = PROC_START_ADDR + (pid - 1) * PROC_SIZE;
-    uintptr_t last_addr = PROC_START_ADDR + pid * PROC_SIZE;
-
     // initialize process page table
     ptable[pid].pagetable = kernel_pagetable;
 
@@ -117,14 +112,15 @@ void process_setup(pid_t pid, const char* program_name) {
     program_image pgm(program_name);
 
     // allocate process memory as specified in program image
+    uintptr_t min_addr = MEMSIZE_VIRTUAL;
     for (auto seg = pgm.begin(); seg != pgm.end(); ++seg) {
         for (uintptr_t a = round_down(seg.va(), PAGESIZE);
              a < seg.va() + seg.size();
              a += PAGESIZE) {
             // `a` is the process virtual address for the next code or data page
-            assert(a >= first_addr && a < last_addr);
             assert(physpages[a / PAGESIZE].refcount == 0);
             ++physpages[a / PAGESIZE].refcount;
+            min_addr = min(min_addr, a);          // track minimum used address
         }
     }
 
@@ -137,8 +133,8 @@ void process_setup(pid_t pid, const char* program_name) {
     // mark entry point
     ptable[pid].regs.reg_rip = pgm.entry();
 
-    // allocate stack segment
-    uintptr_t stack_addr = last_addr - PAGESIZE;
+    // allocate stack growing down from `min_addr + PROC_SIZE`
+    uintptr_t stack_addr = min_addr + PROC_SIZE - PAGESIZE;
     assert(physpages[stack_addr / PAGESIZE].refcount == 0);
     ++physpages[stack_addr / PAGESIZE].refcount;
     ptable[pid].regs.reg_rsp = stack_addr + PAGESIZE;
