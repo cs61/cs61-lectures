@@ -1,7 +1,11 @@
 #include "db.hh"
 
+std::mutex dbm[256];
 dbmap db;
 bool verbose = true;
+std::mutex tcm;
+std::atomic<int> thctr = 0;
+std::condition_variable_any thcv;
 
 
 void handle_connection(int cfd, std::string remote) {
@@ -13,8 +17,9 @@ void handle_connection(int cfd, std::string remote) {
 
     while (fgets(buf, BUFSIZ, fin)) {
         if (sscanf(buf, "GET %s ", key) == 1) {
-            // find item
             auto b = db.bucket(key);
+            std::unique_lock<std::mutex> guard(dbm[b]);
+            // find item
             auto it = db.bfind(b, key);
 
             // print value
@@ -28,23 +33,29 @@ void handle_connection(int cfd, std::string remote) {
             fflush(f);
 
         } else if (sscanf(buf, "SET %s %zu ", key, &sz) == 2) {
-            // find item; insert if missing
+            std::string value;
+            value.assign(sz, '\0');
+            size_t nr = fread(value.data(), 1, sz, fin);
+            assert(nr <= sz);
+
             auto b = db.bucket(key);
+            std::unique_lock<std::mutex> guard(dbm[b]);
+            // find item; insert if missing
             auto it = db.bfind(b, key);
             if (it == db.bend(b)) {
                 it = db.binsert(b, key);
             }
 
             // set value
-            it->value.assign(sz, '\0');
-            size_t nr = fread(it->value.data(), 1, sz, fin);
-            assert(nr <= sz);
+            it->value = value;
             fprintf(f, "STORED #%zu\r\n", it->itemid);
             fflush(f);
+            guard.unlock();
 
         } else if (sscanf(buf, "DELETE %s ", key) == 1) {
             // find item
             auto b = db.bucket(key);
+            std::unique_lock<std::mutex> guard(dbm[b]);
             auto it = db.bfind(b, key);
 
             // remove if found
@@ -75,6 +86,9 @@ void handle_connection(int cfd, std::string remote) {
     }
     fclose(fin); // also closes `f`'s underlying fd
     (void) fclose(f);
+    std::unique_lock thguard(tcm);
+    --thctr;
+    thcv.notify_all();
 }
 
 
@@ -95,6 +109,13 @@ int main(int argc, char** argv) {
         struct sockaddr addr;
         socklen_t addrlen = sizeof(addr);
 
+        std::unique_lock thguard(tcm);
+        while (thctr >= 256) {
+            thcv.wait(tcm);
+        }
+        ++thctr;
+        thguard.unlock();
+
         // Accept connection on listening socket
         int cfd = accept(fd, &addr, &addrlen);
         if (cfd < 0) {
@@ -103,6 +124,8 @@ int main(int argc, char** argv) {
         }
 
         // Handle connection
-        handle_connection(cfd, unparse_sockaddr(&addr, addrlen));
+        std::thread th(handle_connection, cfd, unparse_sockaddr(&addr, addrlen));
+        th.detach();
+        tcm.lock();
     }
 }

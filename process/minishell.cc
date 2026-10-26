@@ -30,6 +30,16 @@ int main() {
         fprintf(stderr, "\n");
 
         // execute command
-        fprintf(stderr, "??? %s\n", buf);
+        pid_t p = fork();
+        if (p == 0) {
+            int r = execvp(shargs.args[0], (char* const*)shargs.args.data());
+            fprintf(stderr, "Yo, that program no exist\n");
+            _exit(1);
+        } else if (p < 0) {
+            assert(false);
+        }
+        int status;
+        pid_t w = waitpid(p, &status, 0);
+        assert(w == p);
     }
 }

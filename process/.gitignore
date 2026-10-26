@@ -4,6 +4,7 @@ fork1
 fork2
 fork3
 forkmix
+forkmix-syscall
 forkmix-test.txt
 forkorder
 makezombies

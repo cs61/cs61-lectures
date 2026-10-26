@@ -1,4 +1,4 @@
-PROGRAMS = forkmix syscall-forkmix forkorder manyfork minishell \
+PROGRAMS = forkmix forkmix-syscall forkorder manyfork minishell \
 	myecho execmyecho spawnmyecho \
 	makezombies pipesizer selfpipe childpipe waitdemo
 RACERPROGRAMS = racer-poll racer-block racer-blockvar racer-selfpipe \
