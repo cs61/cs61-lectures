@@ -51,6 +51,7 @@ static void process_setup(pid_t pid, const char* program_name);
 void kernel_start(const char* command) {
     // initialize hardware
     init_hardware();
+    init_timer(HZ);
     log_printf("Starting WeensyOS\n");
 
     ticks = 1;
@@ -203,6 +204,12 @@ void exception(regstate* regs) {
             entity, regs->reg_rip);
         goto unhandled;
     }
+
+    case INT_IRQ + IRQ_TIMER:
+        ++ticks;
+        lapicstate::get().ack();
+        schedule();
+        break;
 
     default:
     unhandled:
